@@ -16,7 +16,21 @@ const LoginPage = () => {
   // Verificar si hay un redirect en la URL
   const searchParams = new URLSearchParams(location.search);
   const redirect = searchParams.get('redirect') || '/';
-  const showLoginRequiredMessage = searchParams.get('msg') === 'login_required';
+  const msgParam = searchParams.get('msg');
+  
+  // Determinar qué mensaje mostrar según el parámetro msgParam
+  const showLoginRequiredMessage = msgParam === 'login_required';
+  const showLoginRequiredForFavorites = msgParam === 'login_required_for_favorites';
+  
+  const getLoginMessage = () => {
+    if (showLoginRequiredMessage) {
+      return 'Debes iniciar sesión para continuar. Si no tienes cuenta, regístrate.';
+    }
+    if (showLoginRequiredForFavorites) {
+      return 'Debes iniciar sesión para realizar una reserva. Si no tienes cuenta, regístrate.';
+    }
+    return null;
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -60,9 +74,9 @@ const LoginPage = () => {
       <div className="login-container">
         <h1>Iniciar Sesión</h1>
         
-        {showLoginRequiredMessage && (
+        {getLoginMessage() && (
           <div className="login-required-message">
-            Debes iniciar sesión para continuar. Si no tienes cuenta, regístrate.
+            {getLoginMessage()}
           </div>
         )}
         

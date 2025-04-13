@@ -1,0 +1,267 @@
+.reservation-page {
+  padding: 30px 0;
+  min-height: calc(100vh - 80px);
+  background-color: #f7f9fc;
+}
+
+.reservation-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.reservation-container h1 {
+  margin-bottom: 20px;
+  color: #0077b6;
+  font-size: 28px;
+}
+
+.reservation-instruction {
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: #555;
+}
+
+.reservation-content {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+/* Estilos para columna izquierda */
+.reservation-left {
+  flex: 1;
+}
+
+/* Estilos para columna derecha */
+.reservation-right {
+  flex: 1.5;
+}
+
+/* Estilos para la sección de producto */
+.product-summary, .user-summary {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-summary h2, .user-summary h2, .date-selection h2, .price-summary h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.product-summary-info {
+  display: flex;
+  gap: 15px;
+}
+
+.product-summary-image img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.product-summary-details h3 {
+  font-size: 16px;
+  margin: 0 0 5px 0;
+}
+
+.product-category {
+  display: inline-block;
+  background-color: #e8f5fd;
+  color: #0077b6;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  margin: 5px 0;
+}
+
+.product-price {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Estilos para la información del usuario */
+.user-info p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* Estilos para el selector de fechas */
+.date-selection {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rdrCalendarWrapper {
+  width: 100% !important;
+  max-width: 100%;
+  font-size: 14px;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 15px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  border-radius: 3px;
+}
+
+.legend-color.available {
+  background-color: white;
+  border: 1px solid #ddd;
+}
+
+.legend-color.unavailable {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.legend-color.selected {
+  background-color: #0077b6;
+  border: 1px solid #0077b6;
+}
+
+.date-summary {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+.date-summary p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* Estilos para el resumen de precios */
+.price-summary {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.price-breakdown {
+  font-size: 14px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.price-row.total {
+  font-weight: bold;
+  margin-top: 10px;
+  border-top: 2px solid #e0e0e0;
+  border-bottom: none;
+  padding-top: 15px;
+  font-size: 16px;
+  color: #0077b6;
+}
+
+/* Estilos para el botón de confirmar */
+.confirm-reservation-button {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.confirm-reservation-button:hover {
+  background-color: #218838;
+}
+
+.confirm-reservation-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.dates-required-message {
+  text-align: center;
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+/* Estilos para mensajes de carga y error */
+.reservation-loading, .reservation-error, .reservation-not-found {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.reservation-error h2, .reservation-not-found h2 {
+  color: #dc3545;
+  margin-bottom: 15px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 20px;
+  color: #0077b6;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsividad */
+@media (max-width: 992px) {
+  .reservation-content {
+    flex-direction: column;
+  }
+  
+  .reservation-left, .reservation-right {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .rdrCalendarWrapper {
+    font-size: 12px;
+  }
+  
+  .product-summary-image img {
+    width: 80px;
+    height: 80px;
+  }
+} 

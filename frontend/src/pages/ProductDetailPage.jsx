@@ -1,19 +1,34 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar } from 'react-date-range';
 import { es } from 'date-fns/locale';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import './ProductDetailPage.css';
 import BookingForm from '../components/BookingForm';
+import WhatsAppButton from '../components/WhatsAppButton';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [product, setProduct] = useState(null);
   const [unavailableDates, setUnavailableDates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [availabilityError, setAvailabilityError] = useState(null);
+  
+  // Función para manejar el clic en el botón de reserva
+  const handleReserveClick = () => {
+    if (isAuthenticated) {
+      // Si el usuario está autenticado, redirigir a la página de reserva
+      navigate(`/reserva/${id}`);
+    } else {
+      // Si no está autenticado, redirigir al login con parámetros para volver
+      navigate(`/login?redirect=/reserva/${id}&msg=login_required_for_favorites`);
+    }
+  };
   
   // Cargar detalles del producto al montar el componente
   useEffect(() => {
@@ -216,6 +231,14 @@ const ProductDetailPage = () => {
             <div className="product-detail-info">
               <h1 className="product-title">{name}</h1>
               
+              {/* Botón de reserva destacado */}
+              <button 
+                className="reserve-button"
+                onClick={handleReserveClick}
+              >
+                Reservar
+              </button>
+              
               {category && (
                 <div className="product-category">
                   <span className="category-badge">{category.name}</span>
@@ -318,6 +341,9 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
+      
+      {/* Botón de WhatsApp */}
+      <WhatsAppButton productName={name} />
     </div>
   );
 };

@@ -393,4 +393,23 @@
   .product-title {
     font-size: 1.5rem;
   }
+}
+
+/* Estilo para el botón de reserva */
+.reserve-button {
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 15px 0;
+  transition: background-color 0.3s ease;
+}
+
+.reserve-button:hover {
+  background-color: #218838;
 } 

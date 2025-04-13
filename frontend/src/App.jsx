@@ -9,8 +9,10 @@ import ProductFormAdmin from './pages/admin/ProductFormAdmin';
 import AdminPanel from './pages/admin/AdminPanel';
 import ProductListAdmin from './pages/admin/ProductListAdmin';
 import CategoryListAdmin from './pages/admin/CategoryListAdmin';
+import ReservationPage from './pages/ReservationPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import FavoritesPage from './pages/FavoritesPage';
+import ReservationsHistoryPage from './pages/ReservationsHistoryPage';
 import './App.css';
 
 function App() {
@@ -46,6 +48,16 @@ function App() {
               <Header />
               <ProductDetailPage />
             </>
+          } />
+          
+          {/* Ruta para la página de reserva (protegida) */}
+          <Route path="/reserva/:productId" element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <ReservationPage />
+              </>
+            </ProtectedRoute>
           } />
           
           {/* Rutas de administración (protegidas) */}
@@ -97,7 +109,7 @@ function App() {
             <ProtectedRoute>
               <>
                 <Header />
-                <div>Mis reservas (en construcción)</div>
+                <ReservationsHistoryPage />
               </>
             </ProtectedRoute>
           } />

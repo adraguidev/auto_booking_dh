@@ -1,0 +1,304 @@
+.reservations-history-page {
+  padding: 30px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reservations-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.reservations-container h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #333;
+  text-align: center;
+}
+
+.reservations-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.reservations-error {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.reservations-error h2 {
+  color: #dc3545;
+  margin-bottom: 15px;
+}
+
+.retry-button {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.retry-button:hover {
+  background-color: #005f8d;
+}
+
+.no-reservations {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.no-reservations p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.browse-products-link {
+  display: inline-block;
+  background-color: #0077b6;
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.browse-products-link:hover {
+  background-color: #005f8d;
+}
+
+.reservations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reservation-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.reservation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-card.past {
+  border-left: 4px solid #6c757d;
+}
+
+.reservation-card.upcoming {
+  border-left: 4px solid #28a745;
+}
+
+.reservation-header {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.status-badge.completed {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.status-badge.upcoming {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.reservation-id {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.reservation-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .reservation-content {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.product-info {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex: 1;
+}
+
+.product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.no-image {
+  width: 80px;
+  height: 80px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.product-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-link:hover .product-name {
+  color: #0077b6;
+}
+
+.product-category {
+  font-size: 0.9rem;
+  color: #6c757d;
+  padding: 3px 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.reservation-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex: 1;
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-range {
+  display: flex;
+  gap: 10px;
+}
+
+.date-label {
+  font-weight: 600;
+  color: #555;
+  min-width: 60px;
+}
+
+.date-value {
+  color: #333;
+}
+
+.price-info {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.price-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0077b6;
+}
+
+.reservation-footer {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-top: 1px solid #e0e0e0;
+  text-align: right;
+}
+
+.view-details-button {
+  display: inline-block;
+  background-color: transparent;
+  color: #0077b6;
+  text-decoration: none;
+  padding: 8px 15px;
+  border: 1px solid #0077b6;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.view-details-button:hover {
+  background-color: #0077b6;
+  color: white;
+}
+
+/* Responsive design */
+@media (max-width: 767px) {
+  .reservations-container {
+    padding: 20px 15px;
+  }
+  
+  .reservation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .reservation-id {
+    width: 100%;
+    text-align: left;
+  }
+  
+  .product-info {
+    flex: 1 1 100%;
+  }
+  
+  .reservation-details {
+    flex: 1 1 100%;
+    margin-top: 15px;
+  }
+} 
