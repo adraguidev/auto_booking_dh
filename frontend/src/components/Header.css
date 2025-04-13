@@ -70,6 +70,20 @@
   color: var(--primary-color);
 }
 
+.admin-link {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  padding: 8px 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+}
+
+.admin-link:hover {
+  background-color: #005d8f;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .logo {
