@@ -46,10 +46,10 @@ public class FeatureService {
         Feature feature = featureRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Característica no encontrada con ID: " + id));
 
-        // Buscar productos que tengan esta característica
-        List<Product> productsWithFeature = productRepository.findByFeaturesId(id);
+        // Obtener productos asociados a esta característica
+        List<Product> productsWithFeature = productRepository.findByFeatureId(id);
 
-        // Quitar la característica de esos productos
+        // Remover la característica de cada producto
         for (Product product : productsWithFeature) {
             product.removeFeature(feature);
             productRepository.save(product);

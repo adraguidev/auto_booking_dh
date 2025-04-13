@@ -2,9 +2,7 @@ package com.autobooking.api.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "features")
@@ -15,14 +13,11 @@ public class Feature {
     private Long id;
 
     @NotBlank(message = "El nombre de la característica es obligatorio")
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String name;
 
-    @Column
+    @Column(name = "icon")
     private String icon;
-
-    @ManyToMany(mappedBy = "features")
-    private Set<Product> products = new HashSet<>();
 
     // Constructores
     public Feature() {
@@ -58,15 +53,7 @@ public class Feature {
         this.icon = icon;
     }
 
-    public Set<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Set<Product> products) {
-        this.products = products;
-    }
-
-    // Para manejo correcto en colecciones
+    // Equals y HashCode basados en id para uso correcto en colecciones
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

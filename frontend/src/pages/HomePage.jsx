@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import SearchBox from '../components/SearchBox';
+import SearchResults from '../components/SearchResults';
+import ProductCard from '../components/ProductCard';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -7,11 +10,22 @@ const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState({
     categories: true,
-    products: true
+    products: true,
+    search: false
   });
   const [error, setError] = useState({
     categories: null,
-    products: null
+    products: null,
+    search: null
+  });
+
+  // Estado para los resultados de búsqueda
+  const [searchResults, setSearchResults] = useState(null);
+  const [searchParams, setSearchParams] = useState({
+    startDate: null,
+    endDate: null,
+    categoryId: null,
+    categoryName: null
   });
 
   // Cargar categorías y productos al montar el componente
@@ -58,19 +72,76 @@ const HomePage = () => {
     fetchProducts();
   }, []);
 
+  // Función para manejar la búsqueda
+  const handleSearch = async (params) => {
+    setLoading(prev => ({ ...prev, search: true }));
+    setError(prev => ({ ...prev, search: null }));
+    setSearchResults(null);
+    
+    try {
+      // Construir URL con parámetros de búsqueda
+      let url = 'http://localhost:8080/api/products/search?';
+      const queryParams = [];
+      
+      if (params.startDate) queryParams.push(`startDate=${params.startDate}`);
+      if (params.endDate) queryParams.push(`endDate=${params.endDate}`);
+      if (params.categoryId) queryParams.push(`categoryId=${params.categoryId}`);
+      
+      url += queryParams.join('&');
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error en la búsqueda');
+      }
+      
+      const data = await response.json();
+      
+      // Guardar los resultados y parámetros de búsqueda para mostrarlos
+      setSearchResults(data);
+      
+      // Encontrar el nombre de la categoría si se proporcionó un ID
+      let categoryName = null;
+      if (params.categoryId && categories.length > 0) {
+        const selectedCategory = categories.find(cat => cat.id === Number(params.categoryId));
+        categoryName = selectedCategory ? selectedCategory.name : null;
+      }
+      
+      setSearchParams({
+        startDate: params.startDate,
+        endDate: params.endDate,
+        categoryId: params.categoryId,
+        categoryName: data.categoryName || categoryName
+      });
+      
+    } catch (err) {
+      console.error('Error en la búsqueda:', err);
+      setError(prev => ({ ...prev, search: err.message }));
+    } finally {
+      setLoading(prev => ({ ...prev, search: false }));
+    }
+  };
+
   return (
     <main className="home-page">
       <section className="search-section">
         <h2>Buscar auto</h2>
-        <div className="search-container">
-          <input 
-            type="text" 
-            className="search-input" 
-            placeholder="Buscá por fecha..." 
-            disabled 
-          />
-        </div>
+        <SearchBox onSearch={handleSearch} categories={categories} />
       </section>
+
+      {/* Mostrar resultados de búsqueda si existen */}
+      {(searchResults || loading.search || error.search) && (
+        <SearchResults 
+          results={searchResults ? searchResults.results : []}
+          totalProducts={searchResults ? searchResults.totalProducts : 0}
+          categoryName={searchParams.categoryName}
+          startDate={searchParams.startDate}
+          endDate={searchParams.endDate}
+          loading={loading.search}
+          error={error.search}
+        />
+      )}
 
       <section className="categories-section">
         <h2 className="section-title">Categorías</h2>
@@ -84,7 +155,14 @@ const HomePage = () => {
           ) : (
             categories.map(category => (
               <div key={category.id} className="category-card">
-                <Link to={`/buscar?categoria=${category.id}`} className="category-link">
+                <Link 
+                  to="#" 
+                  className="category-link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSearch({ categoryId: category.id });
+                  }}
+                >
                   {category.name}
                 </Link>
               </div>
@@ -104,32 +182,8 @@ const HomePage = () => {
             <p className="empty-text">No hay productos disponibles</p>
           ) : (
             products.slice(0, 4).map(product => (
-              <div key={product.id} className="product-card">
-                <Link to={`/producto/${product.id}`} className="product-link">
-                  <div className="product-image">
-                    {product.images && product.images.length > 0 && (
-                      <img src={product.images[0]} alt={product.name} />
-                    )}
-                  </div>
-                  <h3>{product.name}</h3>
-                  <p>{product.description.substring(0, 60)}...</p>
-                  {product.category && (
-                    <span className="product-category">{product.category.name}</span>
-                  )}
-                  {product.features && product.features.length > 0 && (
-                    <div className="product-features">
-                      {product.features.slice(0, 3).map(feature => (
-                        <span key={feature.id} className="feature-tag">
-                          {feature.icon} {feature.name}
-                        </span>
-                      ))}
-                      {product.features.length > 3 && (
-                        <span className="more-features">+{product.features.length - 3} más</span>
-                      )}
-                    </div>
-                  )}
-                  <button className="view-details-btn">Ver detalles</button>
-                </Link>
+              <div key={product.id} className="product-card-wrapper">
+                <ProductCard product={product} />
               </div>
             ))
           )}

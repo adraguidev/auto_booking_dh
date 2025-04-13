@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/features/**").permitAll()
                 // Rutas protegidas por rol de administrador
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
@@ -50,6 +51,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/features").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/features/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/features/**").hasRole("ADMIN")
                 // Otras rutas requieren autenticación
                 .anyRequest().authenticated()
             )

@@ -79,9 +79,6 @@ const AdminPanel = () => {
             <li className={location.pathname.includes('/admin/categorias') ? 'active' : ''}>
               <Link to="/admin/categorias">Categorías</Link>
             </li>
-            <li className={location.pathname.includes('/admin/caracteristicas') ? 'active' : ''}>
-              <Link to="/admin/caracteristicas">Características</Link>
-            </li>
           </ul>
         </nav>
         <div className="admin-sidebar-footer">

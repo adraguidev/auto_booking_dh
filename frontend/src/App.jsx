@@ -8,8 +8,6 @@ import ProductFormAdmin from './pages/admin/ProductFormAdmin';
 import AdminPanel from './pages/admin/AdminPanel';
 import ProductListAdmin from './pages/admin/ProductListAdmin';
 import CategoryListAdmin from './pages/admin/CategoryListAdmin';
-import FeatureListAdmin from './pages/admin/FeatureListAdmin';
-import ProductDetailPage from './pages/ProductDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -40,8 +38,6 @@ function App() {
             </>
           } />
           
-          <Route path="/producto/:id" element={<ProductDetailPage />} />
-          
           {/* Rutas de administración (protegidas) */}
           <Route path="/administracion" element={
             <ProtectedRoute requireAdmin={true}>
@@ -66,14 +62,6 @@ function App() {
             </ProtectedRoute>
           }>
             <Route index element={<CategoryListAdmin />} />
-          </Route>
-          
-          <Route path="/admin/caracteristicas" element={
-            <ProtectedRoute requireAdmin={true}>
-              <AdminPanel />
-            </ProtectedRoute>
-          }>
-            <Route index element={<FeatureListAdmin />} />
           </Route>
           
           {/* Futuras rutas protegidas */}

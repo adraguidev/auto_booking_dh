@@ -105,7 +105,7 @@ public class Product {
         this.features = features;
     }
     
-    // Métodos para facilitar la gestión de features
+    // Métodos para manejar features
     public void addFeature(Feature feature) {
         this.features.add(feature);
     }
