@@ -1,11 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser, isAdmin } = useAuth();
+  
+  // Verificar que el usuario esté autenticado y sea administrador
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login?redirect=/administracion&msg=login_required');
+      return;
+    }
+    
+    if (!isAdmin()) {
+      // Si no es admin, redirigir a la página principal con mensaje
+      navigate('/', { state: { message: 'No tienes permisos para acceder al panel de administración' } });
+    }
+  }, [currentUser, isAdmin, navigate]);
   
   // Verificar si es un dispositivo móvil
   useEffect(() => {
@@ -31,6 +46,11 @@ const AdminPanel = () => {
       navigate('/admin/productos');
     }
   }, [location.pathname, navigate]);
+  
+  // Si no está autenticado o no es admin, no renderizar nada (lo manejará el useEffect)
+  if (!currentUser || !isAdmin()) {
+    return null;
+  }
   
   // Si es móvil, mostrar mensaje de no disponible
   if (isMobile) {
@@ -59,6 +79,9 @@ const AdminPanel = () => {
             {/* TODO: Agregar más opciones de navegación en futuros sprints */}
           </ul>
         </nav>
+        <div className="admin-sidebar-footer">
+          <Link to="/" className="back-to-site">Volver al sitio</Link>
+        </div>
       </div>
       <div className="admin-content">
         <Outlet />

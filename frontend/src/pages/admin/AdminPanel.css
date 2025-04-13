@@ -83,4 +83,25 @@
 .mobile-message p {
   color: #666;
   font-size: 1.1rem;
+}
+
+.admin-sidebar-footer {
+  margin-top: auto;
+  padding: 20px 15px;
+  border-top: 1px solid #444;
+}
+
+.back-to-site {
+  display: block;
+  padding: 10px 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.back-to-site:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 } 
