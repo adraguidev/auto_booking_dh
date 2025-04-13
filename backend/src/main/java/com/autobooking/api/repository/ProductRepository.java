@@ -11,4 +11,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // Métodos para buscar por categoría
     List<Product> findByCategoryId(Long categoryId);
     List<Product> findByCategoryName(String categoryName);
+    
+    // Métodos para buscar por feature
+    List<Product> findByFeaturesId(Long featureId);
 } 

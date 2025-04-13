@@ -1,22 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductFormAdmin.css';
+import { api } from '../../services/api';
 
 const ProductFormAdmin = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [categories, setCategories] = useState([]);
+  const [features, setFeatures] = useState([]);
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingFeatures, setLoadingFeatures] = useState(true);
   
   const navigate = useNavigate();
 
-  // Cargar categorías al montar el componente
+  // Cargar categorías y características al montar el componente
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -36,7 +40,20 @@ const ProductFormAdmin = () => {
       }
     };
     
+    const fetchFeatures = async () => {
+      try {
+        setLoadingFeatures(true);
+        const response = await api.get('/features');
+        setFeatures(response.data);
+      } catch (error) {
+        console.error('Error al cargar características:', error);
+      } finally {
+        setLoadingFeatures(false);
+      }
+    };
+    
     fetchCategories();
+    fetchFeatures();
   }, []);
 
   const validateForm = () => {
@@ -105,6 +122,17 @@ const ProductFormAdmin = () => {
     setImagePreviews(imagePreviews.filter((_, i) => i !== index));
   };
 
+  // Manejar la selección de características
+  const handleFeatureChange = (featureId) => {
+    setSelectedFeatures(prevSelectedFeatures => {
+      if (prevSelectedFeatures.includes(featureId)) {
+        return prevSelectedFeatures.filter(id => id !== featureId);
+      } else {
+        return [...prevSelectedFeatures, featureId];
+      }
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -119,7 +147,8 @@ const ProductFormAdmin = () => {
         name,
         description,
         images,
-        categoryId: categoryId || null // Incluir categoryId si está seleccionado
+        categoryId: categoryId || null, // Incluir categoryId si está seleccionado
+        featureIds: selectedFeatures.length > 0 ? selectedFeatures : null // Incluir featureIds si hay seleccionados
       };
       
       const response = await fetch('http://localhost:8080/api/products', {
@@ -148,6 +177,7 @@ const ProductFormAdmin = () => {
         setName('');
         setDescription('');
         setCategoryId('');
+        setSelectedFeatures([]);
         setImages([]);
         setImagePreviews([]);
         setErrors({});
@@ -231,6 +261,32 @@ const ProductFormAdmin = () => {
         </div>
         
         <div className="form-group">
+          <label>Características</label>
+          {loadingFeatures ? (
+            <div className="loading-text">Cargando características...</div>
+          ) : features.length === 0 ? (
+            <div className="info-text">No hay características disponibles</div>
+          ) : (
+            <div className="features-checkbox-container">
+              {features.map(feature => (
+                <div key={feature.id} className="feature-checkbox">
+                  <input
+                    type="checkbox"
+                    id={`feature-${feature.id}`}
+                    value={feature.id}
+                    checked={selectedFeatures.includes(feature.id)}
+                    onChange={() => handleFeatureChange(feature.id)}
+                  />
+                  <label htmlFor={`feature-${feature.id}`}>
+                    {feature.icon} {feature.name}
+                  </label>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        <div className="form-group">
           <label htmlFor="images">Imágenes</label>
           <input
             type="file"
@@ -263,17 +319,17 @@ const ProductFormAdmin = () => {
         <div className="form-actions">
           <button
             type="button"
-            className="cancel-button"
             onClick={() => navigate('/admin/productos')}
+            className="cancel-btn"
           >
             Cancelar
           </button>
           <button
             type="submit"
-            className="submit-button"
+            className="submit-btn"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Guardando...' : 'Agregar Producto'}
+            {isSubmitting ? 'Creando...' : 'Crear Producto'}
           </button>
         </div>
       </form>

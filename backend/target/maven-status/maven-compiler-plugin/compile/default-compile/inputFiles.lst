@@ -7,11 +7,15 @@
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/AutoBookingApplication.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/repository/CategoryRepository.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/controller/CategoryController.java
+/Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/repository/FeatureRepository.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/security/JwtRequestFilter.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/service/ProductService.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/security/JwtUtil.java
+/Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/service/FeatureService.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/model/Category.java
+/Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/model/Feature.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/repository/UserRepository.java
+/Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/controller/FeatureController.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/model/User.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/config/SecurityConfig.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/controller/AuthController.java

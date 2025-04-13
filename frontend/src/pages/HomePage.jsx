@@ -105,16 +105,31 @@ const HomePage = () => {
           ) : (
             products.slice(0, 4).map(product => (
               <div key={product.id} className="product-card">
-                <div className="product-image">
-                  {product.images && product.images.length > 0 && (
-                    <img src={product.images[0]} alt={product.name} />
+                <Link to={`/producto/${product.id}`} className="product-link">
+                  <div className="product-image">
+                    {product.images && product.images.length > 0 && (
+                      <img src={product.images[0]} alt={product.name} />
+                    )}
+                  </div>
+                  <h3>{product.name}</h3>
+                  <p>{product.description.substring(0, 60)}...</p>
+                  {product.category && (
+                    <span className="product-category">{product.category.name}</span>
                   )}
-                </div>
-                <h3>{product.name}</h3>
-                <p>{product.description.substring(0, 60)}...</p>
-                {product.category && (
-                  <span className="product-category">{product.category.name}</span>
-                )}
+                  {product.features && product.features.length > 0 && (
+                    <div className="product-features">
+                      {product.features.slice(0, 3).map(feature => (
+                        <span key={feature.id} className="feature-tag">
+                          {feature.icon} {feature.name}
+                        </span>
+                      ))}
+                      {product.features.length > 3 && (
+                        <span className="more-features">+{product.features.length - 3} más</span>
+                      )}
+                    </div>
+                  )}
+                  <button className="view-details-btn">Ver detalles</button>
+                </Link>
               </div>
             ))
           )}

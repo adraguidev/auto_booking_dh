@@ -1,6 +1,8 @@
 -- Limpiar datos existentes manteniendo la estructura
+DELETE FROM product_features;
 DELETE FROM product_images;
 DELETE FROM products;
+DELETE FROM features;
 DELETE FROM categories;
 DELETE FROM users;
 
@@ -17,6 +19,17 @@ INSERT INTO categories (name) VALUES
 INSERT INTO users (first_name, last_name, email, password, is_admin) VALUES 
 ('Admin', 'Usuario', 'admin@example.com', '$2a$10$LYGfuI/GKM5u8kgF5Q4t2eZi1GYM0zJAopxfUZFPBVvUQJJ/KmVKW', true),
 ('Cliente', 'Regular', 'cliente@example.com', '$2a$10$LYGfuI/GKM5u8kgF5Q4t2eZi1GYM0zJAopxfUZFPBVvUQJJ/KmVKW', false);
+
+-- Insertar características (features)
+INSERT INTO features (name, icon) VALUES
+('Aire Acondicionado', '❄️'),
+('Transmisión Automática', '🔄'),
+('4x4', '🚙'),
+('GPS Integrado', '🧭'),
+('Bluetooth', '📱'),
+('Asientos de Cuero', '💺'),
+('Techo Solar', '☀️'),
+('Cámara de Retroceso', '📷');
 
 -- Insertar productos con sus categorías (usamos los IDs recién generados)
 INSERT INTO products (name, description, category_id) 
@@ -36,6 +49,37 @@ SELECT 'Ford Mustang', 'Deportivo con gran potencia y diseño icónico. Motor V8
 
 INSERT INTO products (name, description, category_id) 
 SELECT 'BMW Serie 3', 'Lujo y rendimiento en un solo auto. Interior de alta calidad, tecnología de punta y prestaciones deportivas.', id FROM categories WHERE name = 'Lujo';
+
+-- Asociar características a productos
+-- Toyota Corolla: Aire Acondicionado, Transmisión Automática, Bluetooth
+INSERT INTO product_features (product_id, feature_id)
+SELECT p.id, f.id FROM products p, features f
+WHERE p.name = 'Toyota Corolla' AND f.name IN ('Aire Acondicionado', 'Transmisión Automática', 'Bluetooth');
+
+-- Honda CR-V: Aire Acondicionado, GPS Integrado, Cámara de Retroceso, Bluetooth
+INSERT INTO product_features (product_id, feature_id)
+SELECT p.id, f.id FROM products p, features f
+WHERE p.name = 'Honda CR-V' AND f.name IN ('Aire Acondicionado', 'GPS Integrado', 'Cámara de Retroceso', 'Bluetooth');
+
+-- Ford Ranger: 4x4, Aire Acondicionado, Cámara de Retroceso
+INSERT INTO product_features (product_id, feature_id)
+SELECT p.id, f.id FROM products p, features f
+WHERE p.name = 'Ford Ranger' AND f.name IN ('4x4', 'Aire Acondicionado', 'Cámara de Retroceso');
+
+-- Volkswagen Golf: Aire Acondicionado, Bluetooth, Transmisión Automática
+INSERT INTO product_features (product_id, feature_id)
+SELECT p.id, f.id FROM products p, features f
+WHERE p.name = 'Volkswagen Golf' AND f.name IN ('Aire Acondicionado', 'Bluetooth', 'Transmisión Automática');
+
+-- Ford Mustang: Transmisión Automática, Aire Acondicionado, Asientos de Cuero, Bluetooth
+INSERT INTO product_features (product_id, feature_id)
+SELECT p.id, f.id FROM products p, features f
+WHERE p.name = 'Ford Mustang' AND f.name IN ('Transmisión Automática', 'Aire Acondicionado', 'Asientos de Cuero', 'Bluetooth');
+
+-- BMW Serie 3: Techo Solar, Asientos de Cuero, GPS Integrado, Bluetooth, Cámara de Retroceso, Aire Acondicionado
+INSERT INTO product_features (product_id, feature_id)
+SELECT p.id, f.id FROM products p, features f
+WHERE p.name = 'BMW Serie 3' AND f.name IN ('Techo Solar', 'Asientos de Cuero', 'GPS Integrado', 'Bluetooth', 'Cámara de Retroceso', 'Aire Acondicionado');
 
 -- Insertar imágenes para los productos (después de insertarlos)
 INSERT INTO product_images (product_id, image)

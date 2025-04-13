@@ -1,6 +1,9 @@
 com/autobooking/api/security/JwtUtil.class
+com/autobooking/api/controller/FeatureController.class
 com/autobooking/api/repository/CategoryRepository.class
+com/autobooking/api/repository/FeatureRepository.class
 com/autobooking/api/controller/CategoryController.class
+com/autobooking/api/service/FeatureService.class
 com/autobooking/api/repository/ProductRepository.class
 com/autobooking/api/security/JwtRequestFilter.class
 com/autobooking/api/model/Product.class
@@ -9,6 +12,7 @@ com/autobooking/api/service/UserService.class
 com/autobooking/api/service/ProductService.class
 com/autobooking/api/config/CorsConfig.class
 com/autobooking/api/model/User.class
+com/autobooking/api/model/Feature.class
 com/autobooking/api/config/DataInitializer.class
 com/autobooking/api/AutoBookingApplication.class
 com/autobooking/api/model/Category.class

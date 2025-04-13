@@ -1,8 +1,10 @@
 package com.autobooking.api.controller;
 
 import com.autobooking.api.model.Category;
+import com.autobooking.api.model.Feature;
 import com.autobooking.api.model.Product;
 import com.autobooking.api.service.CategoryService;
+import com.autobooking.api.service.FeatureService;
 import com.autobooking.api.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,8 +14,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/products")
@@ -22,11 +26,13 @@ public class ProductController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final FeatureService featureService;
 
     @Autowired
-    public ProductController(ProductService productService, CategoryService categoryService) {
+    public ProductController(ProductService productService, CategoryService categoryService, FeatureService featureService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.featureService = featureService;
     }
 
     @PostMapping
@@ -49,6 +55,27 @@ public class ProductController {
                     product.setCategory(category);
                 } catch (NumberFormatException e) {
                     // Ignorar si el categoryId no es un número válido
+                }
+            }
+            
+            // Procesar las características (features) si están presentes
+            if (productRequest.containsKey("featureIds") && productRequest.get("featureIds") != null) {
+                try {
+                    @SuppressWarnings("unchecked")
+                    List<Integer> featureIds = (List<Integer>) productRequest.get("featureIds");
+                    Set<Feature> features = new HashSet<>();
+                    
+                    for (Integer featureId : featureIds) {
+                        Feature feature = featureService.findById(featureId.longValue());
+                        features.add(feature);
+                    }
+                    
+                    product.setFeatures(features);
+                } catch (Exception e) {
+                    // Manejar cualquier error al procesar los features
+                    Map<String, String> errorResponse = new HashMap<>();
+                    errorResponse.put("error", "Error al procesar características: " + e.getMessage());
+                    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
                 }
             }
             
