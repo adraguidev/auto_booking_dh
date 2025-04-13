@@ -86,15 +86,14 @@ const ProductDetailPage = () => {
         const data = await response.json();
         
         // Convertir las fechas a objetos Date para el calendario
-        // Ahora manejamos dos posibles formatos: fechas individuales y rangos
         const unavailableDateObjects = [];
         
-        if (data.unavailableDates && Array.isArray(data.unavailableDates)) {
+        if (data && data.unavailableDates && Array.isArray(data.unavailableDates)) {
           data.unavailableDates.forEach(item => {
-            if (item.date) {
+            if (item && item.date) {
               // Es una fecha individual
               unavailableDateObjects.push(new Date(item.date));
-            } else if (item.startDate && item.endDate) {
+            } else if (item && item.startDate && item.endDate) {
               // Es un rango de fechas
               const start = new Date(item.startDate);
               const end = new Date(item.endDate);
@@ -113,6 +112,8 @@ const ProductDetailPage = () => {
       } catch (error) {
         console.error('Error al cargar fechas no disponibles:', error);
         setAvailabilityError('No se pudo cargar la disponibilidad. Intenta refrescar la página.');
+        // Si hay un error, asegurarse de que unavailableDates siga siendo un arreglo vacío
+        setUnavailableDates([]);
       }
     };
     
@@ -136,15 +137,14 @@ const ProductDetailPage = () => {
           const data = await response.json();
           
           // Convertir las fechas a objetos Date para el calendario
-          // Ahora manejamos dos posibles formatos: fechas individuales y rangos
           const unavailableDateObjects = [];
           
-          if (data.unavailableDates && Array.isArray(data.unavailableDates)) {
+          if (data && data.unavailableDates && Array.isArray(data.unavailableDates)) {
             data.unavailableDates.forEach(item => {
-              if (item.date) {
+              if (item && item.date) {
                 // Es una fecha individual
                 unavailableDateObjects.push(new Date(item.date));
-              } else if (item.startDate && item.endDate) {
+              } else if (item && item.startDate && item.endDate) {
                 // Es un rango de fechas
                 const start = new Date(item.startDate);
                 const end = new Date(item.endDate);
@@ -163,6 +163,8 @@ const ProductDetailPage = () => {
         } catch (error) {
           console.error('Error al cargar fechas no disponibles:', error);
           setAvailabilityError('No se pudo cargar la disponibilidad. Intenta refrescar la página.');
+          // Si hay un error, asegurarse de que unavailableDates siga siendo un arreglo vacío
+          setUnavailableDates([]);
         }
       };
       
@@ -335,7 +337,6 @@ const ProductDetailPage = () => {
                   <Calendar
                     date={new Date()}
                     minDate={new Date()}
-                    disabledDates={disableDates}
                     color="#0077b6"
                     locale={es}
                   />

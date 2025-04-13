@@ -1,59 +1,96 @@
+:root {
+  --primary: #4361ee;
+  --primary-light: #4895ef;
+  --primary-dark: #3a0ca3;
+  --accent: #f72585;
+  --accent-light: #ff758f;
+  --accent-dark: #c9184a;
+  --success: #06d6a0;
+  --success-light: #d1f5ea;
+  --warning: #ffd166;
+  --warning-light: #fff3dd;
+  --error: #ef476f;
+  --error-light: #fde2e9;
+  
+  --text-dark: #1f2937;
+  --text-medium: #4b5563;
+  --text-light: #9ca3af;
+  
+  --background: #f9fafb;
+  --background-light: #ffffff;
+  --background-dark: #f3f4f6;
+  
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
 .product-detail-page {
-  padding: 2rem 0;
-  background-color: #f8f9fa;
+  padding: 1.5rem 0;
+  background-color: var(--background);
   min-height: calc(100vh - 140px);
 }
 
 .product-detail-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 15px;
 }
 
 .breadcrumb {
-  margin-bottom: 20px;
-  color: #6c757d;
+  margin-bottom: 1rem;
+  color: var(--text-medium);
   font-size: 0.9rem;
 }
 
 .breadcrumb a {
-  color: #0077b6;
+  color: var(--primary);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .breadcrumb a:hover {
-  text-decoration: underline;
+  color: var(--primary-dark);
 }
 
 .product-detail-content {
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 1.5rem;
 }
 
 .product-detail-left {
-  flex: 1 1 65%;
+  flex: 1 1 60%;
   min-width: 300px;
 }
 
 .product-detail-right {
-  flex: 1 1 30%;
+  flex: 1 1 35%;
   min-width: 300px;
 }
 
 .product-detail-images {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  background-color: var(--card-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
 }
 
 .main-image {
   width: 100%;
   height: 400px;
   overflow: hidden;
-  background-color: #e9ecef;
+  background-color: var(--background-dark);
 }
 
 .main-image img {
@@ -65,16 +102,28 @@
 
 .thumbnail-images {
   display: flex;
-  padding: 10px;
-  gap: 10px;
+  padding: 0.75rem;
+  gap: 0.5rem;
+  background-color: var(--card-bg);
 }
 
 .thumbnail {
-  width: 80px;
-  height: 60px;
+  width: 70px;
+  height: 50px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.thumbnail:hover {
+  transform: scale(1.05);
+  border-color: var(--primary);
+}
+
+.thumbnail.active {
+  border-color: var(--accent);
 }
 
 .thumbnail img {
@@ -82,140 +131,283 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.3s ease;
-}
-
-.thumbnail img:hover {
-  transform: scale(1.05);
 }
 
 .product-detail-info {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  padding: 20px;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
 }
 
 .product-title {
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: #222;
-  font-size: 1.8rem;
+  font-size: 1.75rem;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .product-category {
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
 }
 
 .category-badge {
-  display: inline-block;
-  background-color: #e6f2ff;
-  color: #0077b6;
-  font-size: 0.9rem;
-  padding: 5px 10px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+  color: white;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
 }
 
 .product-features {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
 .product-features h3, 
 .product-description h3,
 .product-policies h3 {
+  color: var(--text-dark);
+  font-size: 1.2rem;
   margin-top: 0;
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 1.3rem;
-  border-bottom: 1px solid #e9ecef;
-  padding-bottom: 10px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
 }
 
 .features-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 0.75rem;
 }
 
 .feature-item {
+  flex: 1 1 auto;
+  min-width: 180px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  background-color: #f8f9fa;
-  padding: 8px 15px;
-  border-radius: 20px;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.feature-item:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .feature-icon {
-  font-size: 1.2rem;
-  color: #0077b6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--primary-light) 15%, var(--primary) 85%);
+  border-radius: var(--radius-sm);
+  color: white;
+  font-size: 1.1rem;
+}
+
+.feature-text {
+  font-size: 0.95rem;
+  color: var(--text-dark) !important;
+  font-weight: 500;
 }
 
 .product-description {
-  margin-bottom: 20px;
+  background-color: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
 }
 
 .product-description p {
+  color: var(--text-medium);
   line-height: 1.6;
-  color: #444;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
 .product-policies {
-  margin-bottom: 20px;
+  background-color: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
 }
 
 .policies-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.policy-item {
+  padding: 1rem;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.policy-item:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .policy-item h4 {
+  color: var(--primary);
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
   margin-top: 0;
-  margin-bottom: 10px;
-  color: #0077b6;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.policy-item h4::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary);
+  border-radius: 50%;
 }
 
 .policy-item ul {
-  padding-left: 20px;
+  list-style: none;
+  padding: 0;
   margin: 0;
 }
 
 .policy-item li {
-  margin-bottom: 8px;
-  color: #555;
+  color: var(--text-medium);
+  margin-bottom: 0.6rem;
+  padding-left: 1.25rem;
+  position: relative;
   line-height: 1.4;
+  font-size: 0.95rem;
 }
 
+.policy-item li::before {
+  content: "•";
+  color: var(--primary);
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+/* Calendario y reserva */
 .availability-section {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  padding: 20px;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
   position: sticky;
   top: 20px;
+  border: 1px solid var(--border);
 }
 
 .availability-section h3 {
+  color: var(--text-dark);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
   margin-top: 0;
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 1.3rem;
-  border-bottom: 1px solid #e9ecef;
-  padding-bottom: 10px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
 }
 
+.date-inputs-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.date-input-wrapper {
+  flex: 1;
+}
+
+.date-input-label {
+  color: var(--text-medium);
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  display: block;
+  font-size: 0.85rem;
+}
+
+.date-input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-dark);
+  background-color: var(--background);
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: var(--primary-light);
+}
+
+.reserve-button {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  margin: 1rem 0;
+}
+
+.reserve-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  filter: brightness(1.05);
+}
+
+.login-required-message {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem;
+  text-align: center;
+  color: var(--text-medium);
+  margin-top: 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* Calendario */
 .calendar-container {
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
 .calendar-container .rdrCalendarWrapper {
   width: 100% !important;
-  max-width: 100%;
-  font-size: 14px;
-  border-radius: 8px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
 }
 
 .calendar-container .rdrMonth {
@@ -223,146 +415,115 @@
 }
 
 .calendar-container .rdrMonthAndYearWrapper {
-  padding-top: 10px;
-  padding-bottom: 8px;
-  background-color: #f8f9fa;
+  padding: 0.6rem;
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border);
 }
 
 .calendar-container .rdrMonthAndYearPickers select {
-  background-color: #fff;
-  border: 1px solid #e9ecef;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-dark);
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.calendar-container .rdrDay {
+  height: 36px;
 }
 
 .calendar-container .rdrDayDisabled {
-  background-color: #ffe3e3 !important;
-  opacity: 0.5;
+  background-color: var(--error-light) !important;
+  opacity: 0.9;
 }
 
 .calendar-container .rdrDayDisabled .rdrDayNumber span {
-  color: #fa5252 !important;
+  color: var(--error) !important;
   text-decoration: line-through;
+  opacity: 0.8;
+}
+
+.calendar-container .rdrDayToday .rdrDayNumber span {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.calendar-container .rdrDayToday .rdrDayNumber span:after {
+  background: var(--primary);
+}
+
+.calendar-container .rdrSelected {
+  background-color: var(--primary) !important;
 }
 
 .calendar-legend {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.8rem;
+  padding: 0.6rem;
+  background-color: var(--background);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.9rem;
-  color: #555;
+  gap: 0.4rem;
 }
 
 .legend-color {
-  display: block;
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
 }
 
 .legend-color.available {
-  background-color: #def7ec;
-  border: 1px solid #0ca678;
+  background-color: var(--success-light);
+  border: 1px solid var(--success);
 }
 
 .legend-color.unavailable {
-  background-color: #ffe3e3;
-  border: 1px solid #fa5252;
+  background-color: var(--error-light);
+  border: 1px solid var(--error);
+}
+
+.legend-text {
+  color: var(--text-medium);
+  font-size: 0.8rem;
 }
 
 .availability-error {
-  background-color: #fff6f6;
-  border: 1px solid #ffe3e3;
-  padding: 15px;
-  border-radius: 8px;
+  background-color: var(--error-light);
+  border: 1px solid var(--error);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem;
+  margin-bottom: 1rem;
   text-align: center;
-  margin-bottom: 20px;
 }
 
 .availability-error p {
-  color: #e03131;
-  margin-bottom: 10px;
+  margin: 0;
+  color: var(--error);
+  font-size: 0.9rem;
 }
 
 .retry-button {
-  background-color: #0077b6;
+  background-color: var(--primary);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.retry-button:hover {
-  background-color: #005a8d;
-}
-
-.booking-cta {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.booking-button {
-  background-color: #0077b6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 12px 24px;
-  font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s ease;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
 }
 
-.booking-button:hover {
-  background-color: #005a8d;
-}
-
-.booking-disclaimer {
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin-top: 10px;
-}
-
-.product-detail-loading,
-.product-detail-error,
-.product-detail-not-found {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 50vh;
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.back-link {
-  display: inline-block;
-  margin-top: 20px;
-  color: #0077b6;
-  text-decoration: none;
-  border: 1px solid #0077b6;
-  padding: 8px 16px;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.back-link:hover {
-  background-color: #0077b6;
-  color: white;
-}
-
-/* Media queries para diseño responsivo */
+/* Responsive */
 @media (max-width: 768px) {
   .product-detail-content {
     flex-direction: column;
@@ -372,8 +533,17 @@
     height: 300px;
   }
   
+  .product-title {
+    font-size: 1.5rem;
+  }
+  
   .policies-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .availability-section {
+    position: static;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -383,7 +553,7 @@
   }
   
   .product-detail-container {
-    padding: 0 10px;
+    padding: 0 1rem;
   }
   
   .main-image {
@@ -392,24 +562,176 @@
   
   .product-title {
     font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .feature-item {
+    min-width: 100%;
+  }
+  
+  .feature-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .product-description,
+  .product-policies,
+  .availability-section {
+    padding: 1rem;
+  }
+  
+  .date-inputs-container {
+    flex-direction: column;
+    gap: 0.8rem;
   }
 }
 
-/* Estilo para el botón de reserva */
-.reserve-button {
-  display: inline-block;
-  padding: 12px 30px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin: 15px 0;
-  transition: background-color 0.3s ease;
+/* Estilos para el panel de reserva */
+.booking-panel {
+  background-color: var(--card-bg) !important;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  color: var(--text-dark);
 }
 
-.reserve-button:hover {
-  background-color: #218838;
+.booking-panel h2 {
+  color: var(--text-dark);
+  font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.75rem;
+}
+
+.booking-panel label {
+  color: var(--text-medium);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.booking-panel .date-field {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-dark);
+  padding: 0.75rem 1rem;
+  width: 100%;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.booking-panel .confirm-button {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  margin: 1.25rem 0;
+}
+
+.booking-panel .confirm-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  filter: brightness(1.05);
+}
+
+.booking-panel .login-message {
+  color: var(--text-medium);
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+/* Selector más específico para sobrescribir los estilos del panel oscuro */
+.product-detail-right .card, 
+.product-detail-right [class*="card"],
+.product-detail-right [class*="panel"],
+.product-detail-right [class*="sidebar"] {
+  background-color: var(--card-bg) !important;
+  color: var(--text-dark) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Estilos para los selectores de fecha */
+.date-selector-label {
+  color: var(--text-medium) !important;
+  font-size: 0.9rem !important;
+}
+
+/* Forzar colores claros en los textos dentro del panel de reserva */
+.product-detail-right [class*="panel"] *,
+.product-detail-right [class*="sidebar"] * {
+  color: var(--text-dark);
+}
+
+.product-detail-right [class*="panel"] input,
+.product-detail-right [class*="sidebar"] input,
+.product-detail-right [class*="panel"] select,
+.product-detail-right [class*="sidebar"] select {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--text-dark);
+}
+
+/* Etiquetas de disponibilidad */
+.availability-legend {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.availability-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-medium);
+}
+
+.status-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+.status-available {
+  background-color: var(--success-light);
+  border: 1px solid var(--success);
+}
+
+.status-unavailable {
+  background-color: var(--error-light);
+  border: 1px solid var(--error);
+}
+
+/* Botones en el formulario de reserva */
+.date-controls button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.date-controls button:hover {
+  background-color: var(--primary-dark);
 } 

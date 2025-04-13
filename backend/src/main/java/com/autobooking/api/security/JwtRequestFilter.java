@@ -33,6 +33,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private UserRepository userRepository;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // El método GET para /api/auth/ y todas las peticiones GET para productos deben ser públicas
+        return path.startsWith("/api/auth/") || 
+               (request.getMethod().equals("GET") && 
+                (path.startsWith("/api/products") || 
+                 path.startsWith("/api/categories") || 
+                 path.startsWith("/api/features")));
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
