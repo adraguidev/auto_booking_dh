@@ -23,7 +23,6 @@ public class Product {
     @ElementCollection
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image", columnDefinition = "TEXT")
-    @Lob
     private List<String> images = new ArrayList<>();
     
     @ManyToOne(fetch = FetchType.EAGER)

@@ -41,11 +41,15 @@ public class SecurityConfig {
                 // Rutas públicas (sin autenticación)
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                // Rutas protegidas por rol
+                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                // Rutas protegidas por rol de administrador
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
                 // Otras rutas requieren autenticación
                 .anyRequest().authenticated()
             )
