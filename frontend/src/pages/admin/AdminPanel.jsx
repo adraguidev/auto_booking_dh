@@ -1,0 +1,70 @@
+import { useEffect, useState } from 'react';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import './AdminPanel.css';
+
+const AdminPanel = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Verificar si es un dispositivo móvil
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Comprobar al montar el componente
+    checkIfMobile();
+    
+    // Comprobar al cambiar el tamaño de la ventana
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Limpiar event listener al desmontar
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
+  
+  // Redireccionar a la lista de productos si estamos en la ruta /administracion exacta
+  useEffect(() => {
+    if (location.pathname === '/administracion') {
+      navigate('/admin/productos');
+    }
+  }, [location.pathname, navigate]);
+  
+  // Si es móvil, mostrar mensaje de no disponible
+  if (isMobile) {
+    return (
+      <div className="mobile-message">
+        <h2>Panel de administración no disponible en móvil</h2>
+        <p>Por favor use un dispositivo de mayor tamaño.</p>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="admin-panel">
+      <div className="admin-sidebar">
+        <div className="admin-sidebar-header">
+          <h2>Panel Admin</h2>
+        </div>
+        <nav className="admin-nav">
+          <ul>
+            <li className={location.pathname.includes('/admin/productos') && !location.pathname.includes('/nuevo') ? 'active' : ''}>
+              <Link to="/admin/productos">Lista de productos</Link>
+            </li>
+            <li className={location.pathname.includes('/admin/productos/nuevo') ? 'active' : ''}>
+              <Link to="/admin/productos/nuevo">Agregar producto</Link>
+            </li>
+            {/* TODO: Agregar más opciones de navegación en futuros sprints */}
+          </ul>
+        </nav>
+      </div>
+      <div className="admin-content">
+        <Outlet />
+      </div>
+    </div>
+  );
+};
+
+export default AdminPanel; 
