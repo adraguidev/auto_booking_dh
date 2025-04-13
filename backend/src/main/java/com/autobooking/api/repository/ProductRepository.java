@@ -4,7 +4,11 @@ import com.autobooking.api.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // No es necesario agregar métodos adicionales para este prompt
+    // Métodos para buscar por categoría
+    List<Product> findByCategoryId(Long categoryId);
+    List<Product> findByCategoryName(String categoryName);
 } 

@@ -76,7 +76,9 @@ const AdminPanel = () => {
             <li className={location.pathname.includes('/admin/productos/nuevo') ? 'active' : ''}>
               <Link to="/admin/productos/nuevo">Agregar producto</Link>
             </li>
-            {/* TODO: Agregar más opciones de navegación en futuros sprints */}
+            <li className={location.pathname.includes('/admin/categorias') ? 'active' : ''}>
+              <Link to="/admin/categorias">Categorías</Link>
+            </li>
           </ul>
         </nav>
         <div className="admin-sidebar-footer">

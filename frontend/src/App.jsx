@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import ProductFormAdmin from './pages/admin/ProductFormAdmin';
 import AdminPanel from './pages/admin/AdminPanel';
 import ProductListAdmin from './pages/admin/ProductListAdmin';
+import CategoryListAdmin from './pages/admin/CategoryListAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -53,6 +54,14 @@ function App() {
           }>
             <Route index element={<ProductListAdmin />} />
             <Route path="nuevo" element={<ProductFormAdmin />} />
+          </Route>
+          
+          <Route path="/admin/categorias" element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminPanel />
+            </ProtectedRoute>
+          }>
+            <Route index element={<CategoryListAdmin />} />
           </Route>
           
           {/* Futuras rutas protegidas */}

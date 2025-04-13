@@ -38,4 +38,12 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+    
+    public List<Product> findByCategoryId(Long categoryId) {
+        return productRepository.findByCategoryId(categoryId);
+    }
+    
+    public List<Product> findByCategoryName(String categoryName) {
+        return productRepository.findByCategoryName(categoryName);
+    }
 } 

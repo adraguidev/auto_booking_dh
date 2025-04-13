@@ -25,6 +25,10 @@ public class Product {
     @Column(name = "image", columnDefinition = "TEXT")
     @Lob
     private List<String> images = new ArrayList<>();
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     // Constructores
     public Product() {
@@ -34,6 +38,13 @@ public class Product {
         this.name = name;
         this.description = description;
         this.images = images;
+    }
+    
+    public Product(String name, String description, List<String> images, Category category) {
+        this.name = name;
+        this.description = description;
+        this.images = images;
+        this.category = category;
     }
 
     // Getters y Setters
@@ -67,5 +78,13 @@ public class Product {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+    
+    public Category getCategory() {
+        return category;
+    }
+    
+    public void setCategory(Category category) {
+        this.category = category;
     }
 } 

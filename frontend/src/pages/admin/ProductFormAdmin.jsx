@@ -1,17 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProductFormAdmin.css';
 
 const ProductFormAdmin = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [categories, setCategories] = useState([]);
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   
   const navigate = useNavigate();
+
+  // Cargar categorías al montar el componente
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const response = await fetch('http://localhost:8080/api/categories');
+        
+        if (!response.ok) {
+          throw new Error('Error al cargar categorías');
+        }
+        
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error al cargar categorías:', error);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+    
+    fetchCategories();
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -92,7 +118,8 @@ const ProductFormAdmin = () => {
       const productData = {
         name,
         description,
-        images
+        images,
+        categoryId: categoryId || null // Incluir categoryId si está seleccionado
       };
       
       const response = await fetch('http://localhost:8080/api/products', {
@@ -106,17 +133,28 @@ const ProductFormAdmin = () => {
       const data = await response.json();
       
       if (response.status === 201) {
-        setSuccessMessage('Producto creado exitosamente');
+        // Obtener el nombre de la categoría para el mensaje de éxito
+        let successMsg = 'Producto creado exitosamente';
+        if (categoryId) {
+          const selectedCategory = categories.find(c => c.id.toString() === categoryId.toString());
+          if (selectedCategory) {
+            successMsg += ` en categoría "${selectedCategory.name}"`;
+          }
+        }
+        
+        setSuccessMessage(successMsg);
+        
         // Limpiar formulario
         setName('');
         setDescription('');
+        setCategoryId('');
         setImages([]);
         setImagePreviews([]);
         setErrors({});
         
         // Redireccionar después de un breve momento
         setTimeout(() => {
-          // navigate('/admin/productos'); // Descomentar cuando exista la ruta
+          navigate('/admin/productos');
         }, 2000);
       } else {
         // Mostrar error del servidor
@@ -175,6 +213,24 @@ const ProductFormAdmin = () => {
         </div>
         
         <div className="form-group">
+          <label htmlFor="category">Categoría</label>
+          <select
+            id="category"
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            disabled={loadingCategories}
+          >
+            <option value="">Sin categoría</option>
+            {categories.map(category => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+          {loadingCategories && <div className="loading-text">Cargando categorías...</div>}
+        </div>
+        
+        <div className="form-group">
           <label htmlFor="images">Imágenes</label>
           <input
             type="file"
@@ -208,7 +264,7 @@ const ProductFormAdmin = () => {
           <button
             type="button"
             className="cancel-button"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/admin/productos')}
           >
             Cancelar
           </button>

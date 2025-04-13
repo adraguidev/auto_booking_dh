@@ -1,0 +1,129 @@
+.category-list-admin {
+  padding: 20px;
+}
+
+.category-list-admin h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.category-form {
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #e9ecef;
+}
+
+.category-form .form-group {
+  display: flex;
+  gap: 10px;
+}
+
+.category-form input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.category-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-create {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-create:hover {
+  background-color: #006094;
+}
+
+.categories-container {
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.categories-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.categories-table th, 
+.categories-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.categories-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+.categories-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+.feedback {
+  margin: 15px 0;
+  padding: 10px 15px;
+  border-radius: 4px;
+}
+
+.feedback.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.feedback.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.loading, .error, .empty-message {
+  padding: 20px;
+  text-align: center;
+}
+
+.loading {
+  color: #6c757d;
+}
+
+.error {
+  color: #721c24;
+}
+
+.empty-message {
+  color: #6c757d;
+  font-style: italic;
+} 
