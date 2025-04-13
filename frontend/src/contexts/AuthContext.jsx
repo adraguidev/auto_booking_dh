@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al iniciar sesión');
+        throw new Error(errorData.message || errorData.error || 'Error al iniciar sesión');
       }
       
       const data = await response.json();

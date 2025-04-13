@@ -236,4 +236,23 @@ public class ProductController {
                     .body(Collections.singletonMap("error", "Error al obtener fechas no disponibles"));
         }
     }
+
+    @GetMapping("/{id}")
+    @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
+    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+        try {
+            Product product = productService.findById(id);
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Producto no encontrado con ID: " + id));
+            }
+            return ResponseEntity.ok(product);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(Map.of("error", e.getReason()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener el producto: " + e.getMessage()));
+        }
+    }
 } 

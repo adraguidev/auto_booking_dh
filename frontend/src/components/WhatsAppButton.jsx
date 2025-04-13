@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './WhatsAppButton.css';
 
 const WhatsAppButton = ({ productName }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  
   // Número de teléfono (ficticio) para el contacto - formato internacional sin + ni espacios
   const phoneNumber = '5491112345678';
   
@@ -14,20 +16,40 @@ const WhatsAppButton = ({ productName }) => {
   // URL del icono de WhatsApp
   const whatsappIconUrl = 'https://cdn-icons-png.flaticon.com/512/124/124034.png';
   
+  // Manejar clic en el botón
+  const handleClick = () => {
+    // Mostrar un breve mensaje de confirmación
+    setShowTooltip(true);
+    
+    // Ocultar el mensaje después de 3 segundos
+    setTimeout(() => {
+      setShowTooltip(false);
+    }, 3000);
+  };
+  
   return (
-    <a 
-      href={whatsappUrl} 
-      className="whatsapp-button"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Contactar por WhatsApp"
-    >
-      <img 
-        src={whatsappIconUrl} 
-        alt="WhatsApp" 
-        className="whatsapp-icon" 
-      />
-    </a>
+    <>
+      <a 
+        href={whatsappUrl} 
+        className="whatsapp-button"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contactar por WhatsApp"
+        onClick={handleClick}
+      >
+        <img 
+          src={whatsappIconUrl} 
+          alt="WhatsApp" 
+          className="whatsapp-icon" 
+        />
+      </a>
+      
+      {showTooltip && (
+        <div className="whatsapp-tooltip">
+          Conectando con el proveedor vía WhatsApp...
+        </div>
+      )}
+    </>
   );
 };
 

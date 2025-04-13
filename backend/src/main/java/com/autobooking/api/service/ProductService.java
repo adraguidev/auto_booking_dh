@@ -110,9 +110,14 @@ public class ProductService {
      * @throws ResponseStatusException si el producto no existe
      */
     public Product findById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
-                        "Producto no encontrado con ID: " + id));
+        try {
+            return productRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                            "Producto no encontrado con ID: " + id));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
+                    "Error al buscar el producto: " + e.getMessage());
+        }
     }
     
     /**

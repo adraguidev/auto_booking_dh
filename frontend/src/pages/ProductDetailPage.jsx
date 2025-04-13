@@ -35,17 +35,35 @@ const ProductDetailPage = () => {
     const fetchProductDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:8080/api/products/${id}`);
+        const token = localStorage.getItem('authToken');
+        const headers = {
+          'Content-Type': 'application/json'
+        };
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+          headers
+        });
         
         if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
+          if (response.status === 403) {
+            throw new Error('No tienes permiso para ver este producto');
+          }
+          if (response.status === 404) {
+            throw new Error('Producto no encontrado');
+          }
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Error: ${response.status}`);
         }
         
         const data = await response.json();
         setProduct(data);
       } catch (error) {
         console.error('Error al cargar detalle del producto:', error);
-        setError('No se pudo cargar el producto. Intente nuevamente más tarde.');
+        setError(error.message || 'No se pudo cargar el producto. Intente nuevamente más tarde.');
       } finally {
         setLoading(false);
       }

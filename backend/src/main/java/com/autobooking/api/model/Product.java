@@ -25,7 +25,7 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image", columnDefinition = "TEXT")
     private List<String> images = new ArrayList<>();
