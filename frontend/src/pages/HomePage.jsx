@@ -115,6 +115,11 @@ const HomePage = () => {
         categoryName: data.categoryName || categoryName
       });
       
+      // Hacer scroll a la sección de resultados de búsqueda
+      setTimeout(() => {
+        document.getElementById('search-results')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      
     } catch (err) {
       console.error('Error en la búsqueda:', err);
       setError(prev => ({ ...prev, search: err.message }));
@@ -129,19 +134,6 @@ const HomePage = () => {
         <h2>Buscar auto</h2>
         <SearchBox onSearch={handleSearch} categories={categories} />
       </section>
-
-      {/* Mostrar resultados de búsqueda si existen */}
-      {(searchResults || loading.search || error.search) && (
-        <SearchResults 
-          results={searchResults ? searchResults.results : []}
-          totalProducts={searchResults ? searchResults.totalProducts : 0}
-          categoryName={searchParams.categoryName}
-          startDate={searchParams.startDate}
-          endDate={searchParams.endDate}
-          loading={loading.search}
-          error={error.search}
-        />
-      )}
 
       <section className="categories-section">
         <h2 className="section-title">Categorías</h2>
@@ -170,6 +162,21 @@ const HomePage = () => {
           )}
         </div>
       </section>
+
+      {/* Mostrar resultados de búsqueda si existen */}
+      {(searchResults || loading.search || error.search) && (
+        <section id="search-results" className="search-results-section">
+          <SearchResults 
+            results={searchResults ? searchResults.results : []}
+            totalProducts={searchResults ? searchResults.totalProducts : 0}
+            categoryName={searchParams.categoryName}
+            startDate={searchParams.startDate}
+            endDate={searchParams.endDate}
+            loading={loading.search}
+            error={error.search}
+          />
+        </section>
+      )}
 
       <section className="recommendations-section">
         <h2 className="section-title">Recomendaciones</h2>
