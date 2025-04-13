@@ -1,170 +1,158 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CategoryListAdmin.css';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:8080/api';
 
 const CategoryListAdmin = () => {
   const [categories, setCategories] = useState([]);
-  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategory, setNewCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [feedback, setFeedback] = useState({ message: '', type: '' });
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
-  // Cargar categorías al montar el componente
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  // Obtener lista de categorías
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8080/api/categories');
-      
-      if (!response.ok) {
-        throw new Error('Error al cargar categorías');
-      }
-      
-      const data = await response.json();
-      setCategories(data);
+      const response = await axios.get(`${API_URL}/categories`);
+      setCategories(response.data);
       setError(null);
     } catch (err) {
-      setError('Error al cargar las categorías. Por favor, intente nuevamente.');
-      console.error('Error al cargar categorías:', err);
+      setError('Error al cargar las categorías. Por favor, intente de nuevo.');
+      console.error('Error fetching categories:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Crear una nueva categoría
-  const handleCreateCategory = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validar nombre
-    if (!newCategoryName.trim()) {
-      setFeedback({
-        message: 'El nombre de la categoría no puede estar vacío',
-        type: 'error'
-      });
-      return;
-    }
-    
+    if (!newCategory.trim()) return;
+
     try {
-      const response = await fetch('http://localhost:8080/api/categories', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name: newCategoryName.trim() })
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al crear categoría');
+      // Obtener el token del localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('No autorizado. Por favor, inicie sesión.');
+        return;
       }
-      
-      const newCategory = await response.json();
-      
-      // Actualizar la lista de categorías
-      setCategories([...categories, newCategory]);
-      
-      // Limpiar el campo y mostrar feedback
-      setNewCategoryName('');
-      setFeedback({
-        message: `Categoría "${newCategory.name}" creada exitosamente`,
-        type: 'success'
-      });
-      
-      // Limpiar el mensaje después de 3 segundos
-      setTimeout(() => {
-        setFeedback({ message: '', type: '' });
-      }, 3000);
-      
+
+      // Configurar los headers con el token de autenticación
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+
+      const response = await axios.post(
+        `${API_URL}/categories`,
+        { name: newCategory },
+        config
+      );
+
+      setCategories([...categories, response.data]);
+      setNewCategory('');
     } catch (err) {
-      setFeedback({
-        message: err.message || 'Error al crear la categoría',
-        type: 'error'
-      });
-      console.error('Error al crear categoría:', err);
+      if (err.response && err.response.status === 401) {
+        setError('No autorizado. Por favor, inicie sesión.');
+      } else {
+        setError('Error al crear la categoría. Por favor, intente de nuevo.');
+      }
+      console.error('Error creating category:', err);
     }
   };
 
-  // Eliminar una categoría
-  const handleDeleteCategory = async (categoryId, categoryName) => {
-    // Confirmación del usuario
-    const confirmed = window.confirm(
-      `¿Eliminar categoría "${categoryName}"? Esto quitará esta categoría de cualquier producto asociado.`
-    );
-    
-    if (!confirmed) return;
-    
+  const openDeleteModal = (category) => {
+    setCategoryToDelete(category);
+    setDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setCategoryToDelete(null);
+  };
+
+  const handleDelete = async () => {
+    if (!categoryToDelete) return;
+
     try {
-      const response = await fetch(`http://localhost:8080/api/categories/${categoryId}`, {
-        method: 'DELETE'
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al eliminar categoría');
+      // Obtener el token del localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('No autorizado. Por favor, inicie sesión.');
+        closeDeleteModal();
+        return;
       }
-      
+
+      // Configurar los headers con el token de autenticación
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+
+      await axios.delete(
+        `${API_URL}/categories/${categoryToDelete.id}`,
+        config
+      );
+
       // Actualizar la lista de categorías
-      setCategories(categories.filter(cat => cat.id !== categoryId));
-      
-      // Mostrar feedback
-      setFeedback({
-        message: `Categoría "${categoryName}" eliminada exitosamente`,
-        type: 'success'
-      });
-      
-      // Limpiar el mensaje después de 3 segundos
-      setTimeout(() => {
-        setFeedback({ message: '', type: '' });
-      }, 3000);
-      
+      setCategories(categories.filter(cat => cat.id !== categoryToDelete.id));
+      setError(null);
+      closeDeleteModal();
     } catch (err) {
-      setFeedback({
-        message: err.message || 'Error al eliminar la categoría',
-        type: 'error'
-      });
-      console.error('Error al eliminar categoría:', err);
+      if (err.response && err.response.status === 401) {
+        setError('No autorizado. Por favor, inicie sesión.');
+      } else if (err.response && err.response.status === 409) {
+        setError('No se puede eliminar la categoría porque está asociada a productos.');
+      } else {
+        setError('Error al eliminar la categoría. Por favor, intente de nuevo.');
+      }
+      console.error('Error deleting category:', err);
+      closeDeleteModal();
     }
   };
 
   return (
     <div className="category-list-admin">
-      <h2>Administrar Categorías</h2>
-      
-      {/* Formulario para crear nueva categoría */}
-      <div className="category-form">
-        <form onSubmit={handleCreateCategory}>
+      <h2 className="admin-title">Administración de Categorías</h2>
+
+      <div className="admin-section">
+        <h3>Crear Nueva Categoría</h3>
+        <form onSubmit={handleSubmit} className="admin-form">
           <div className="form-group">
             <input
               type="text"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="admin-input"
               placeholder="Nombre de la categoría"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              required
             />
-            <button type="submit" className="btn-create">Crear categoría</button>
+            <button 
+              type="submit" 
+              className="admin-button create-button" 
+              disabled={!newCategory.trim()}
+            >
+              Crear Categoría
+            </button>
           </div>
         </form>
       </div>
-      
-      {/* Mensajes de feedback */}
-      {feedback.message && (
-        <div className={`feedback ${feedback.type}`}>
-          {feedback.message}
-        </div>
-      )}
-      
-      {/* Lista de categorías */}
-      <div className="categories-container">
+
+      {error && <div className="admin-error">{error}</div>}
+
+      <div className="admin-section">
+        <h3>Categorías Existentes</h3>
         {loading ? (
-          <p className="loading">Cargando categorías...</p>
-        ) : error ? (
-          <p className="error">{error}</p>
-        ) : categories.length === 0 ? (
-          <p className="empty-message">No hay categorías registradas</p>
-        ) : (
-          <table className="categories-table">
+          <div className="admin-loading">Cargando categorías...</div>
+        ) : categories.length > 0 ? (
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>ID</th>
@@ -179,8 +167,8 @@ const CategoryListAdmin = () => {
                   <td>{category.name}</td>
                   <td>
                     <button 
-                      className="btn-delete"
-                      onClick={() => handleDeleteCategory(category.id, category.name)}
+                      className="admin-button delete-button"
+                      onClick={() => openDeleteModal(category)}
                     >
                       Eliminar
                     </button>
@@ -189,8 +177,30 @@ const CategoryListAdmin = () => {
               ))}
             </tbody>
           </table>
+        ) : (
+          <div className="admin-empty">No hay categorías disponibles.</div>
         )}
       </div>
+
+      {deleteModalOpen && categoryToDelete && (
+        <div className="confirmation-modal">
+          <div className="confirmation-content">
+            <h3>Confirmar Eliminación</h3>
+            <p>¿Está seguro de que desea eliminar la categoría <strong>{categoryToDelete.name}</strong>?</p>
+            <div className="confirmation-warning">
+              Esta acción no se puede deshacer. Si hay productos asociados a esta categoría, la eliminación podría fallar.
+            </div>
+            <div className="confirmation-buttons">
+              <button className="admin-button cancel-button" onClick={closeDeleteModal}>
+                Cancelar
+              </button>
+              <button className="admin-button confirm-button" onClick={handleDelete}>
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

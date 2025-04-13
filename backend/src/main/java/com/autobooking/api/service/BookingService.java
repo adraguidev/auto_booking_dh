@@ -88,7 +88,7 @@ public class BookingService {
         booking.setEndDate(endDate);
         booking.setTotalPrice(totalPrice);
         booking.setStatus(Booking.BookingStatus.PENDING);
-        booking.setCreatedDate(LocalDate.now());
+        booking.setCreatedAt(LocalDate.now());
 
         return bookingRepository.save(booking);
     }

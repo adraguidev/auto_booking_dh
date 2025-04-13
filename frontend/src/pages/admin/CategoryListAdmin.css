@@ -1,129 +1,196 @@
 .category-list-admin {
   padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.category-list-admin h2 {
+.admin-title {
   margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.admin-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-section h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
   color: #333;
 }
 
-.category-form {
+.admin-form {
+  display: flex;
   margin-bottom: 20px;
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 5px;
-  border: 1px solid #e9ecef;
 }
 
-.category-form .form-group {
+.form-group {
   display: flex;
+  flex: 1;
   gap: 10px;
 }
 
-.category-form input {
+.admin-input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ced4da;
+  border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
 }
 
-.category-form input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.btn-create {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
+.admin-button {
   padding: 10px 15px;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
-.btn-create:hover {
-  background-color: #006094;
+.admin-button:hover {
+  transform: translateY(-2px);
 }
 
-.categories-container {
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+.admin-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.categories-table {
+.create-button {
+  background-color: #0077b6;
+  color: white;
+}
+
+.create-button:hover:not(:disabled) {
+  background-color: #005a87;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
+
+.cancel-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #5a6268;
+}
+
+.confirm-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #c0392b;
+}
+
+.admin-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.categories-table th, 
-.categories-table td {
+.admin-table th,
+.admin-table td {
   padding: 12px 15px;
   text-align: left;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.categories-table th {
+.admin-table th {
   background-color: #f8f9fa;
   font-weight: 600;
-  color: #495057;
+  color: #333;
 }
 
-.categories-table tr:hover {
-  background-color: #f8f9fa;
+.admin-table tr:hover {
+  background-color: #f5f5f5;
 }
 
-.btn-delete {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn-delete:hover {
-  background-color: #c82333;
-}
-
-.feedback {
-  margin: 15px 0;
-  padding: 10px 15px;
-  border-radius: 4px;
-}
-
-.feedback.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.feedback.error {
+.admin-error {
   background-color: #f8d7da;
   color: #721c24;
-  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
 }
 
-.loading, .error, .empty-message {
-  padding: 20px;
+.admin-loading,
+.admin-empty {
   text-align: center;
-}
-
-.loading {
+  padding: 20px;
   color: #6c757d;
 }
 
-.error {
-  color: #721c24;
+/* Modal de confirmación */
+.confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.empty-message {
-  color: #6c757d;
-  font-style: italic;
+.confirmation-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 25px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.confirmation-content h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+}
+
+.confirmation-warning {
+  color: #e74c3c;
+  font-weight: 500;
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #f8d7da;
+  border-radius: 4px;
+}
+
+.confirmation-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-group {
+    flex-direction: column;
+  }
+  
+  .admin-button {
+    width: 100%;
+  }
 } 

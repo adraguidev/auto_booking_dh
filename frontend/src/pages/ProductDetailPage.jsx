@@ -53,7 +53,29 @@ const ProductDetailPage = () => {
         const data = await response.json();
         
         // Convertir las fechas a objetos Date para el calendario
-        const unavailableDateObjects = data.unavailableDates.map(dateStr => new Date(dateStr));
+        // Ahora manejamos dos posibles formatos: fechas individuales y rangos
+        const unavailableDateObjects = [];
+        
+        if (data.unavailableDates && Array.isArray(data.unavailableDates)) {
+          data.unavailableDates.forEach(item => {
+            if (item.date) {
+              // Es una fecha individual
+              unavailableDateObjects.push(new Date(item.date));
+            } else if (item.startDate && item.endDate) {
+              // Es un rango de fechas
+              const start = new Date(item.startDate);
+              const end = new Date(item.endDate);
+              
+              // Añadir todas las fechas dentro del rango
+              const currentDate = new Date(start);
+              while (currentDate <= end) {
+                unavailableDateObjects.push(new Date(currentDate));
+                currentDate.setDate(currentDate.getDate() + 1);
+              }
+            }
+          });
+        }
+        
         setUnavailableDates(unavailableDateObjects);
       } catch (error) {
         console.error('Error al cargar fechas no disponibles:', error);
@@ -81,7 +103,29 @@ const ProductDetailPage = () => {
           const data = await response.json();
           
           // Convertir las fechas a objetos Date para el calendario
-          const unavailableDateObjects = data.unavailableDates.map(dateStr => new Date(dateStr));
+          // Ahora manejamos dos posibles formatos: fechas individuales y rangos
+          const unavailableDateObjects = [];
+          
+          if (data.unavailableDates && Array.isArray(data.unavailableDates)) {
+            data.unavailableDates.forEach(item => {
+              if (item.date) {
+                // Es una fecha individual
+                unavailableDateObjects.push(new Date(item.date));
+              } else if (item.startDate && item.endDate) {
+                // Es un rango de fechas
+                const start = new Date(item.startDate);
+                const end = new Date(item.endDate);
+                
+                // Añadir todas las fechas dentro del rango
+                const currentDate = new Date(start);
+                while (currentDate <= end) {
+                  unavailableDateObjects.push(new Date(currentDate));
+                  currentDate.setDate(currentDate.getDate() + 1);
+                }
+              }
+            });
+          }
+          
           setUnavailableDates(unavailableDateObjects);
         } catch (error) {
           console.error('Error al cargar fechas no disponibles:', error);

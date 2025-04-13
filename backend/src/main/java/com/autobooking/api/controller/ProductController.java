@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,42 +199,41 @@ public class ProductController {
     @GetMapping("/{id}/unavailable-dates")
     public ResponseEntity<?> getUnavailableDates(@PathVariable Long id) {
         try {
-            // Verificar si el producto existe
-            if (!productService.existsById(id)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of("error", "Producto no encontrado"));
-            }
+            // Verifica si el producto existe
+            Product product = productService.findById(id);
             
-            // En esta fase inicial, devolvemos fechas simuladas
-            // En futuras implementaciones, esto se reemplazará con la lógica real
-            // para consultar las reservas existentes
+            // Simulación de fechas no disponibles
+            // Esto será reemplazado por lógica real que consulte las reservas
+            List<Map<String, Object>> unavailableDates = new ArrayList<>();
             
+            // Simular días individuales no disponibles (los próximos 3 días pares)
             LocalDate today = LocalDate.now();
-            List<Map<String, String>> unavailableDates = new ArrayList<>();
-            
-            // Simulamos algunas fechas no disponibles (los próximos 3 días pares)
-            for (int i = 2; i <= 10; i += 2) {
-                LocalDate date = today.plusDays(i);
-                Map<String, String> dateMap = new HashMap<>();
-                dateMap.put("date", date.format(DateTimeFormatter.ISO_DATE));
-                unavailableDates.add(dateMap);
+            for (int i = 2; i <= 6; i += 2) {
+                LocalDate unavailableDay = today.plusDays(i);
+                Map<String, Object> singleDate = new HashMap<>();
+                singleDate.put("date", unavailableDay.format(DateTimeFormatter.ISO_DATE));
+                singleDate.put("type", "single");
+                unavailableDates.add(singleDate);
             }
             
-            // Simulamos un rango no disponible (desde hoy + 14 días, durante 3 días)
-            LocalDate rangeStart = today.plusDays(14);
-            LocalDate rangeEnd = rangeStart.plusDays(2);
-            Map<String, String> rangeMap = new HashMap<>();
-            rangeMap.put("startDate", rangeStart.format(DateTimeFormatter.ISO_DATE));
-            rangeMap.put("endDate", rangeEnd.format(DateTimeFormatter.ISO_DATE));
-            unavailableDates.add(rangeMap);
+            // Simular un rango de fechas no disponibles (2 semanas después por 3 días)
+            Map<String, Object> dateRange = new HashMap<>();
+            dateRange.put("startDate", today.plusDays(14).format(DateTimeFormatter.ISO_DATE));
+            dateRange.put("endDate", today.plusDays(16).format(DateTimeFormatter.ISO_DATE));
+            dateRange.put("type", "range");
+            unavailableDates.add(dateRange);
             
-            return ResponseEntity.ok(Map.of(
-                "productId", id,
-                "unavailableDates", unavailableDates
-            ));
+            Map<String, Object> response = new HashMap<>();
+            response.put("productId", id);
+            response.put("unavailableDates", unavailableDates);
+            
+            return ResponseEntity.ok(response);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(Collections.singletonMap("error", e.getReason()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al obtener fechas no disponibles: " + e.getMessage()));
+                    .body(Collections.singletonMap("error", "Error al obtener fechas no disponibles"));
         }
     }
 } 

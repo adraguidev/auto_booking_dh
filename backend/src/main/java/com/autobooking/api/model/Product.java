@@ -2,6 +2,9 @@ package com.autobooking.api.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +34,11 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
     
+    @NotNull(message = "El precio es obligatorio")
+    @Positive(message = "El precio debe ser un valor positivo")
+    @Column(name = "price", precision = 10, scale = 2)
+    private BigDecimal price = BigDecimal.ZERO;
+    
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "product_features",
@@ -54,6 +62,14 @@ public class Product {
         this.description = description;
         this.images = images;
         this.category = category;
+    }
+    
+    public Product(String name, String description, List<String> images, Category category, BigDecimal price) {
+        this.name = name;
+        this.description = description;
+        this.images = images;
+        this.category = category;
+        this.price = price;
     }
 
     // Getters y Setters
@@ -95,6 +111,14 @@ public class Product {
     
     public void setCategory(Category category) {
         this.category = category;
+    }
+    
+    public BigDecimal getPrice() {
+        return price;
+    }
+    
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
     
     public Set<Feature> getFeatures() {

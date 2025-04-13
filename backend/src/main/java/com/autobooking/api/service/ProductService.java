@@ -93,6 +93,29 @@ public class ProductService {
     }
     
     /**
+     * Verifica si existe un producto con el ID especificado
+     * 
+     * @param id ID del producto a verificar
+     * @return true si existe, false si no
+     */
+    public boolean existsById(Long id) {
+        return productRepository.existsById(id);
+    }
+    
+    /**
+     * Encuentra un producto por su ID
+     * 
+     * @param id ID del producto a buscar
+     * @return El producto encontrado
+     * @throws ResponseStatusException si el producto no existe
+     */
+    public Product findById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
+                        "Producto no encontrado con ID: " + id));
+    }
+    
+    /**
      * Busca productos disponibles por rango de fechas y categoría opcional
      * 
      * @param startDateStr Fecha de inicio del rango en formato YYYY-MM-DD

@@ -6,7 +6,7 @@ import { addDays, format } from 'date-fns';
 import './BookingForm.css';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
 const BookingForm = ({ product }) => {

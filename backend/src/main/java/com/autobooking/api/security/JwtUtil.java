@@ -60,6 +60,43 @@ public class JwtUtil {
                 .getBody();
     }
     
+    /**
+     * Verifica si un token es válido.
+     * 
+     * @param token el token JWT a validar
+     * @return true si el token es válido, false en caso contrario
+     */
+    public boolean isTokenValid(String token) {
+        try {
+            Claims claims = validateToken(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Obtiene el ID del usuario desde el token.
+     * 
+     * @param token el token JWT
+     * @return el ID del usuario
+     */
+    public Long getUserIdFromToken(String token) {
+        Claims claims = validateToken(token);
+        return ((Number) claims.get("id")).longValue();
+    }
+    
+    /**
+     * Verifica si el usuario asociado al token es administrador.
+     * 
+     * @param token el token JWT
+     * @return true si el usuario es administrador, false en caso contrario
+     */
+    public boolean isAdmin(String token) {
+        Claims claims = validateToken(token);
+        return Boolean.TRUE.equals(claims.get("isAdmin"));
+    }
+    
     // Extrae el email (subject) del token
     public String getEmailFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);

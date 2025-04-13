@@ -146,4 +146,8 @@
   .recommendations-container {
     grid-template-columns: 1fr;
   }
+}
+
+.search-results-section {
+  margin-bottom: 40px;
 } 

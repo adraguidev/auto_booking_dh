@@ -4,11 +4,13 @@ import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 import ProductFormAdmin from './pages/admin/ProductFormAdmin';
 import AdminPanel from './pages/admin/AdminPanel';
 import ProductListAdmin from './pages/admin/ProductListAdmin';
 import CategoryListAdmin from './pages/admin/CategoryListAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
+import FavoritesPage from './pages/FavoritesPage';
 import './App.css';
 
 function App() {
@@ -35,6 +37,14 @@ function App() {
             <>
               <Header />
               <LoginPage />
+            </>
+          } />
+          
+          {/* Ruta para ver detalles de un producto */}
+          <Route path="/productos/:id" element={
+            <>
+              <Header />
+              <ProductDetailPage />
             </>
           } />
           
@@ -78,7 +88,7 @@ function App() {
             <ProtectedRoute>
               <>
                 <Header />
-                <div>Mis favoritos (en construcción)</div>
+                <FavoritesPage />
               </>
             </ProtectedRoute>
           } />

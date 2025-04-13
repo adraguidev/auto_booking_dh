@@ -1,7 +1,7 @@
 package com.autobooking.api.repository;
 
 import com.autobooking.api.model.Booking;
-import com.autobooking.api.model.BookingStatus;
+import com.autobooking.api.model.Booking.BookingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

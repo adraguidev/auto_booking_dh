@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -32,6 +34,14 @@ public class User {
 
     @Column(name = "is_admin", nullable = false)
     private Boolean isAdmin = false;
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_favorites",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private Set<Product> favorites = new HashSet<>();
 
     // Constructores
     public User() {
@@ -92,5 +102,30 @@ public class User {
 
     public void setIsAdmin(Boolean isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public Set<Product> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Set<Product> favorites) {
+        this.favorites = favorites;
+    }
+
+    public void addFavorite(Product product) {
+        this.favorites.add(product);
+    }
+
+    public void removeFavorite(Product product) {
+        this.favorites.remove(product);
+    }
+
+    public boolean hasFavorite(Product product) {
+        return this.favorites.contains(product);
+    }
+
+    public boolean hasFavorite(Long productId) {
+        return this.favorites.stream()
+                .anyMatch(product -> product.getId().equals(productId));
     }
 } 
