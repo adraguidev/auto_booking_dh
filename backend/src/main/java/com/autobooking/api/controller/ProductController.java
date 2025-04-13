@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +185,55 @@ public class ProductController {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Error al buscar productos: " + e.getMessage());
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Endpoint para obtener las fechas no disponibles de un producto
+     * En el futuro, estas fechas se obtendrán de las reservas del producto
+     * 
+     * @param id ID del producto
+     * @return Lista de fechas no disponibles
+     */
+    @GetMapping("/{id}/unavailable-dates")
+    public ResponseEntity<?> getUnavailableDates(@PathVariable Long id) {
+        try {
+            // Verificar si el producto existe
+            if (!productService.existsById(id)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Producto no encontrado"));
+            }
+            
+            // En esta fase inicial, devolvemos fechas simuladas
+            // En futuras implementaciones, esto se reemplazará con la lógica real
+            // para consultar las reservas existentes
+            
+            LocalDate today = LocalDate.now();
+            List<Map<String, String>> unavailableDates = new ArrayList<>();
+            
+            // Simulamos algunas fechas no disponibles (los próximos 3 días pares)
+            for (int i = 2; i <= 10; i += 2) {
+                LocalDate date = today.plusDays(i);
+                Map<String, String> dateMap = new HashMap<>();
+                dateMap.put("date", date.format(DateTimeFormatter.ISO_DATE));
+                unavailableDates.add(dateMap);
+            }
+            
+            // Simulamos un rango no disponible (desde hoy + 14 días, durante 3 días)
+            LocalDate rangeStart = today.plusDays(14);
+            LocalDate rangeEnd = rangeStart.plusDays(2);
+            Map<String, String> rangeMap = new HashMap<>();
+            rangeMap.put("startDate", rangeStart.format(DateTimeFormatter.ISO_DATE));
+            rangeMap.put("endDate", rangeEnd.format(DateTimeFormatter.ISO_DATE));
+            unavailableDates.add(rangeMap);
+            
+            return ResponseEntity.ok(Map.of(
+                "productId", id,
+                "unavailableDates", unavailableDates
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener fechas no disponibles: " + e.getMessage()));
         }
     }
 } 
