@@ -13,7 +13,7 @@ const Header = () => {
         </div>
         <div className="header-right">
           <Link to="/administracion" className="admin-link">Panel Admin</Link>
-          <Link to="/register" className="auth-button">Crear cuenta</Link>
+          <Link to="/registro" className="auth-button">Crear cuenta</Link>
           <Link to="/login" className="auth-button">Iniciar sesión</Link>
         </div>
       </div>

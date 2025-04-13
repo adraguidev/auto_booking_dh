@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
+import RegisterPage from './pages/RegisterPage';
 import ProductFormAdmin from './pages/admin/ProductFormAdmin';
 import AdminPanel from './pages/admin/AdminPanel';
 import ProductListAdmin from './pages/admin/ProductListAdmin';
@@ -15,6 +16,13 @@ function App() {
           <>
             <Header />
             <HomePage />
+          </>
+        } />
+        
+        <Route path="/registro" element={
+          <>
+            <Header />
+            <RegisterPage />
           </>
         } />
         
