@@ -29,9 +29,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Verificar si existen reservas para un producto en un rango de fechas específico
     @Query("SELECT COUNT(b) > 0 FROM Booking b WHERE b.product.id = :productId " +
            "AND b.status != :cancelledStatus " +
-           "AND ((b.startDate BETWEEN :startDate AND :endDate) " +
-           "OR (b.endDate BETWEEN :startDate AND :endDate) " +
-           "OR (:startDate BETWEEN b.startDate AND b.endDate))")
+           "AND (" +
+                // El inicio de la reserva existente está entre las fechas solicitadas
+                "(b.startDate BETWEEN :startDate AND :endDate) " +
+                // El fin de la reserva existente está entre las fechas solicitadas
+                "OR (b.endDate BETWEEN :startDate AND :endDate) " +
+                // El inicio solicitado está entre la reserva existente
+                "OR (:startDate BETWEEN b.startDate AND b.endDate) " +
+                // El fin solicitado está entre la reserva existente
+                "OR (:endDate BETWEEN b.startDate AND b.endDate)" +
+           ")")
     boolean existsOverlappingBooking(
             @Param("productId") Long productId,
             @Param("startDate") LocalDate startDate,
@@ -48,4 +55,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findActiveBookingsByProductId(
             @Param("productId") Long productId,
             @Param("cancelledStatus") Booking.BookingStatus cancelledStatus);
+            
+    // Nueva consulta para buscar todas las reservas activas para un producto incluyendo futuras reservas
+    @Query("SELECT b FROM Booking b WHERE b.product.id = :productId " +
+           "AND (b.status = com.autobooking.api.model.Booking$BookingStatus.PENDING " +
+           "   OR b.status = com.autobooking.api.model.Booking$BookingStatus.CONFIRMED) " +
+           "ORDER BY b.startDate")
+    List<Booking> findAllActiveBookingsForProduct(@Param("productId") Long productId);
 } 

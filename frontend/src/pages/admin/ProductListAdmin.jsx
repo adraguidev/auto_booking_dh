@@ -40,8 +40,16 @@ const ProductListAdmin = () => {
     if (!isConfirmed) return;
     
     try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('No estás autorizado. Por favor, inicia sesión.');
+      }
+
       const response = await fetch(`http://localhost:8080/api/products/${productId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       
       if (!response.ok) {

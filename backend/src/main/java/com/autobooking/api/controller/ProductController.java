@@ -171,7 +171,12 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId) {
         
         try {
+            System.out.println("DEBUG - Endpoint searchProducts - startDate: " + startDate + 
+                    ", endDate: " + endDate + ", categoryId: " + categoryId);
+                    
             List<Product> results = productService.searchProducts(startDate, endDate, categoryId);
+            
+            System.out.println("DEBUG - Resultados encontrados: " + results.size());
             
             // Información opcional sobre la búsqueda para el frontend
             Map<String, Object> response = new HashMap<>();
@@ -193,10 +198,13 @@ public class ProductController {
         } catch (ResponseStatusException e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", e.getReason());
+            System.out.println("ERROR - searchProducts: " + e.getReason());
             return new ResponseEntity<>(errorResponse, e.getStatusCode());
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Error al buscar productos: " + e.getMessage());
+            System.out.println("ERROR - searchProducts: " + e.getMessage());
+            e.printStackTrace();
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -219,12 +227,17 @@ public class ProductController {
             List<Booking> activeBookings = bookingService.getActiveBookingsForProduct(id);
             System.out.println("DEBUG - Reservas activas encontradas: " + activeBookings.size());
             
+            // Información adicional sobre la consulta
+            System.out.println("DEBUG - Consulta SQL ejecutada: findActiveBookingsByProductId con id=" + id);
+            System.out.println("DEBUG - Parámetros - productId: " + id + ", cancelledStatus: " + Booking.BookingStatus.CANCELLED);
+            
             // Imprimir detalles de cada reserva
             for (Booking booking : activeBookings) {
                 System.out.println("DEBUG - Reserva: " + booking.getId() + 
                     " - Desde: " + booking.getStartDate() + 
                     " - Hasta: " + booking.getEndDate() + 
-                    " - Estado: " + booking.getStatus());
+                    " - Estado: " + booking.getStatus() +
+                    " - Usuario: " + (booking.getUser() != null ? booking.getUser().getId() : "null"));
             }
             
             // Convertir las reservas a fechas no disponibles
@@ -247,12 +260,12 @@ public class ProductController {
             response.put("unavailableDates", unavailableDates);
             System.out.println("DEBUG - Respuesta final: " + response);
             
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
+            System.out.println("ERROR - Error al obtener fechas no disponibles: " + e.getMessage());
             e.printStackTrace();
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Error al obtener fechas no disponibles: " + e.getMessage());
-            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener fechas no disponibles: " + e.getMessage()));
         }
     }
 
@@ -308,6 +321,86 @@ public class ProductController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Error al actualizar el precio: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Endpoint para depurar reservas de un producto
+     * 
+     * @param id ID del producto
+     * @return Información de depuración de reservas
+     */
+    @GetMapping("/{id}/debug-bookings")
+    public ResponseEntity<?> debugBookings(
+            @PathVariable Long id,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        try {
+            // Verificar si el producto existe
+            Product product = productService.findById(id);
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Producto no encontrado con ID: " + id));
+            }
+            
+            // Obtener todas las reservas para el producto
+            List<Booking> allBookings = bookingService.getBookingsByProduct(id);
+            List<Booking> activeBookings = bookingService.getActiveBookingsForProduct(id);
+            
+            // Si se proporcionaron fechas, verificar disponibilidad
+            LocalDate start = null;
+            LocalDate end = null;
+            boolean isAvailable = true;
+            
+            if (startDate != null && endDate != null) {
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    start = LocalDate.parse(startDate, formatter);
+                    end = LocalDate.parse(endDate, formatter);
+                    
+                    isAvailable = bookingService.isProductAvailable(id, start, end);
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "Formato de fecha inválido. Use YYYY-MM-DD"));
+                }
+            }
+            
+            // Crear información de depuración
+            Map<String, Object> debugInfo = new HashMap<>();
+            debugInfo.put("productId", id);
+            debugInfo.put("totalBookings", allBookings.size());
+            debugInfo.put("activeBookings", activeBookings.size());
+            
+            // Información de fechas y disponibilidad
+            if (start != null && end != null) {
+                debugInfo.put("requestedStartDate", start.toString());
+                debugInfo.put("requestedEndDate", end.toString());
+                debugInfo.put("isAvailable", isAvailable);
+            }
+            
+            // Detalles de reservas activas
+            List<Map<String, Object>> bookingDetails = new ArrayList<>();
+            for (Booking booking : activeBookings) {
+                Map<String, Object> details = new HashMap<>();
+                details.put("id", booking.getId());
+                details.put("startDate", booking.getStartDate().toString());
+                details.put("endDate", booking.getEndDate().toString());
+                details.put("status", booking.getStatus().toString());
+                details.put("userId", booking.getUser().getId());
+                
+                if (start != null && end != null) {
+                    boolean noOverlap = booking.getEndDate().isBefore(start) || booking.getStartDate().isAfter(end);
+                    details.put("overlapsWithRequest", !noOverlap);
+                }
+                
+                bookingDetails.add(details);
+            }
+            debugInfo.put("activeBookingDetails", bookingDetails);
+            
+            return ResponseEntity.ok(debugInfo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al obtener información de depuración: " + e.getMessage()));
         }
     }
 } 

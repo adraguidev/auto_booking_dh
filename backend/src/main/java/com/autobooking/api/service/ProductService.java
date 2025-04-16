@@ -139,6 +139,9 @@ public class ProductService {
      * @return Lista de productos que cumplen con los criterios
      */
     public List<Product> searchProducts(String startDateStr, String endDateStr, Long categoryId) {
+        System.out.println("DEBUG - Búsqueda de productos - startDate: " + startDateStr + 
+                ", endDate: " + endDateStr + ", categoryId: " + categoryId);
+                
         // Validar y parsear fechas si se proporcionaron
         LocalDate startDate = null;
         LocalDate endDate = null;
@@ -175,8 +178,11 @@ public class ProductService {
             products = productRepository.findAll();
         }
         
+        System.out.println("DEBUG - Productos encontrados antes de filtrar por fechas: " + products.size());
+        
         // Si no se proporcionaron fechas, devolver todos los productos
         if (startDate == null || endDate == null) {
+            System.out.println("DEBUG - No se proporcionaron fechas, devolviendo todos los productos");
             return products;
         }
         
@@ -184,13 +190,19 @@ public class ProductService {
         List<Product> availableProducts = new ArrayList<>();
         
         for (Product product : products) {
+            System.out.println("DEBUG - Verificando disponibilidad para producto: " + product.getId() + " - " + product.getName());
+            
             // Verificar si el producto está disponible para el rango de fechas
             boolean isAvailable = bookingService.isProductAvailable(product.getId(), startDate, endDate);
+            
+            System.out.println("DEBUG - Producto " + product.getId() + " disponible: " + isAvailable);
             
             if (isAvailable) {
                 availableProducts.add(product);
             }
         }
+        
+        System.out.println("DEBUG - Productos disponibles después de filtrar: " + availableProducts.size());
         
         return availableProducts;
     }
