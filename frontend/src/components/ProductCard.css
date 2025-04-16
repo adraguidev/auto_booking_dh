@@ -1,34 +1,35 @@
 .product-card {
-  background-color: var(--bg-card);
-  border-radius: var(--radius-lg);
+  background: #fff;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: var(--shadow-md);
-  transition: transform var(--transition-normal),
-    box-shadow var(--transition-normal);
+  box-shadow: 0 2px 12px 0 rgba(0, 119, 182, 0.08);
+  transition: transform 0.22s cubic-bezier(0.4, 2, 0.6, 1), box-shadow 0.22s;
   display: flex;
   flex-direction: column;
   height: 100%;
   position: relative;
-  border: 1px solid var(--bg-tertiary);
+  border: 1.5px solid #e0e0e0;
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
+  transform: translateY(-7px) scale(1.03);
+  box-shadow: 0 10px 24px 0 rgba(0, 119, 182, 0.15);
+  border-color: #0077b6;
 }
 
 .product-image {
   width: 100%;
   height: 180px;
   overflow: hidden;
+  border-radius: 14px 14px 0 0;
 }
 
 .product-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 2, 0.6, 1);
+  border-radius: 14px 14px 0 0;
 }
 
 .product-card:hover .product-image img {
@@ -36,36 +37,37 @@
 }
 
 .product-content {
-  padding: var(--space-4);
+  padding: 28px 20px 18px 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
 .product-title {
-  margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-size-lg);
-  color: var(--text-primary);
-  font-weight: 600;
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  color: #23272f;
+  font-weight: 700;
+  letter-spacing: 0.2px;
 }
 
 .product-description {
-  margin: 0 0 var(--space-4) 0;
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
+  margin: 0 0 18px 0;
+  font-size: 1rem;
+  color: #6c757d;
   flex-grow: 1;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .product-category {
   display: inline-block;
-  background-color: rgba(0, 119, 182, 0.1);
-  color: var(--primary);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-xs);
-  margin-bottom: var(--space-2);
-  font-weight: 500;
+  background: #e6f2f8;
+  color: #0077b6;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -96,23 +98,26 @@
 .product-link {
   display: inline-block;
   text-decoration: none;
-  color: var(--text-light);
-  background-color: var(--primary);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
-  margin-top: var(--space-3);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(90deg, #0077b6 0%, #48cae4 100%);
+  padding: 12px 28px;
+  border-radius: 10px;
+  margin-top: 18px;
+  font-size: 1rem;
+  font-weight: 600;
   text-align: center;
-  transition: all var(--transition-fast);
-  border: 2px solid var(--primary);
+  transition: all 0.22s cubic-bezier(0.4, 2, 0.6, 1);
+  border: none;
+  box-shadow: 0 2px 8px 0 rgba(0, 119, 182, 0.08);
+  letter-spacing: 0.2px;
+  position: relative;
+  overflow: hidden;
 }
 
 .product-link:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-  border-color: var(--primary-dark);
+  background: linear-gradient(90deg, #48cae4 0%, #0077b6 100%);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 16px 0 rgba(0, 119, 182, 0.13);
 }
 
 .product-image-link {
@@ -141,31 +146,31 @@
 }
 
 .product-price {
-  font-weight: 600;
+  font-weight: 700;
   color: #0077b6;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
 }
 
 .favorite-icon {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 14px;
+  right: 14px;
   z-index: 10;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.18s cubic-bezier(0.4, 2, 0.6, 1);
+  box-shadow: 0 2px 8px rgba(0, 119, 182, 0.08);
 }
 
 .favorite-icon:hover {
-  transform: scale(1.1);
-  background-color: rgba(255, 255, 255, 0.9);
+  transform: scale(1.13);
+  background-color: #e0f2fe;
 }
 
 .favorite-filled,
