@@ -1,12 +1,15 @@
 package com.autobooking.api.controller;
 
 import com.autobooking.api.model.Booking;
+import com.autobooking.api.model.Product;
 import com.autobooking.api.model.User;
+import com.autobooking.api.repository.ProductRepository;
 import com.autobooking.api.service.BookingService;
 import com.autobooking.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,11 +26,16 @@ public class BookingController {
 
     private final BookingService bookingService;
     private final UserService userService;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public BookingController(BookingService bookingService, UserService userService) {
+    public BookingController(
+            BookingService bookingService,
+            UserService userService,
+            ProductRepository productRepository) {
         this.bookingService = bookingService;
         this.userService = userService;
+        this.productRepository = productRepository;
     }
 
     /**
@@ -37,6 +45,7 @@ public class BookingController {
      * @return Reserva creada
      */
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createBooking(@RequestBody Map<String, Object> bookingRequest) {
         try {
             // Extraer datos del request
@@ -65,6 +74,16 @@ public class BookingController {
             if (startDate.isBefore(LocalDate.now())) {
                 Map<String, String> errorResponse = new HashMap<>();
                 errorResponse.put("error", "No se pueden hacer reservas con fechas pasadas");
+                return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+            }
+            
+            // Obtener información del producto para depuración
+            Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("Producto no encontrado"));
+            
+            if (product.getPrice() == null) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "El producto no tiene un precio definido. Producto ID: " + productId);
                 return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
             }
             
@@ -115,6 +134,7 @@ public class BookingController {
      * @return Lista de reservas del usuario
      */
     @GetMapping("/user/{userId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getUserBookings(@PathVariable Long userId) {
         try {
             // Validar que el usuario existe
@@ -146,6 +166,7 @@ public class BookingController {
      * @return Reserva encontrada
      */
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getBookingById(@PathVariable Long id) {
         try {
             return bookingService.getBookingById(id)
@@ -169,6 +190,7 @@ public class BookingController {
      * @return Mensaje de confirmación
      */
     @PutMapping("/{id}/cancel")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> cancelBooking(@PathVariable Long id) {
         try {
             bookingService.cancelBooking(id);

@@ -39,7 +39,7 @@ public class FavoriteController {
     public ResponseEntity<?> getUserFavorites(@PathVariable Long userId, HttpServletRequest request) {
         try {
             // Validar que el usuario autenticado es el mismo que solicita sus favoritos
-            validateUserAccess(userId, request);
+            validateUserAccess(request, userId);
             
             Set<Product> favorites = userService.getFavorites(userId);
             return ResponseEntity.ok(favorites);
@@ -70,7 +70,7 @@ public class FavoriteController {
         
         try {
             // Validar que el usuario autenticado es el mismo que añade el favorito
-            validateUserAccess(userId, request);
+            validateUserAccess(request, userId);
             
             // Obtener el ID del producto del cuerpo de la petición
             Long productId = requestBody.get("productId");
@@ -109,7 +109,7 @@ public class FavoriteController {
         
         try {
             // Validar que el usuario autenticado es el mismo que elimina el favorito
-            validateUserAccess(userId, request);
+            validateUserAccess(request, userId);
             
             // Eliminar de favoritos
             userService.removeFavorite(userId, productId);
@@ -142,7 +142,7 @@ public class FavoriteController {
         
         try {
             // Validar que el usuario autenticado es el mismo que consulta sus favoritos
-            validateUserAccess(userId, request);
+            validateUserAccess(request, userId);
             
             boolean isFavorite = userService.isFavorite(userId, productId);
             Map<String, Boolean> response = new HashMap<>();
@@ -163,31 +163,29 @@ public class FavoriteController {
     /**
      * Valida que el usuario autenticado tenga acceso a la operación solicitada.
      * 
-     * @param userId ID del usuario de la URL
      * @param request HTTP request con el token JWT
+     * @param userId ID del usuario de la URL
      * @throws ResponseStatusException Si el usuario no está autenticado o no coincide
      */
-    private void validateUserAccess(Long userId, HttpServletRequest request) throws ResponseStatusException {
-        // Extraer el token de la cabecera Authorization
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token no proporcionado");
+    private void validateUserAccess(HttpServletRequest request, Long userId) {
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, 
+                "Debes iniciar sesión para acceder a esta funcionalidad");
         }
-        
-        String token = authHeader.substring(7);
-        
-        // Verificar que el token es válido
-        if (!jwtUtil.isTokenValid(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token inválido");
-        }
-        
-        // Obtener el ID del usuario del token
-        Long tokenUserId = jwtUtil.getUserIdFromToken(token);
-        
-        // Verificar que el usuario del token coincide con el de la URL
-        if (!userId.equals(tokenUserId) && !jwtUtil.isAdmin(token)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
+
+        try {
+            token = token.substring(7); // Remove "Bearer " prefix
+            Long tokenUserId = jwtUtil.getUserIdFromToken(token);
+            
+            // Usar el ID del token para las operaciones
+            if (!tokenUserId.equals(userId)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
                     "No tienes permiso para acceder a los favoritos de otro usuario");
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, 
+                "Tu sesión ha expirado. Por favor, inicia sesión nuevamente");
         }
     }
 } 

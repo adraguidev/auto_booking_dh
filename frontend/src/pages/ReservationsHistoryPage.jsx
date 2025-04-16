@@ -19,32 +19,32 @@ const ReservationsHistoryPage = () => {
     }
 
     // Cargar las reservas del usuario
-    const fetchReservations = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await axios.get(
-          `http://localhost:8080/api/bookings/user/${currentUser.id}`,
-          { headers: getAuthHeader() }
-        );
-        
-        // Ordenar las reservas por fecha de inicio (descendente)
-        const sortedReservations = response.data.sort((a, b) => 
-          new Date(b.startDate) - new Date(a.startDate)
-        );
-        
-        setReservations(sortedReservations);
-      } catch (error) {
-        console.error('Error al cargar las reservas:', error);
-        setError('No se pudieron cargar tus reservas. Por favor, intenta nuevamente más tarde.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchReservations();
-  }, [currentUser, navigate, getAuthHeader]);
+  }, [currentUser, navigate]);
+
+  const fetchReservations = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.get(
+        `http://localhost:8080/api/bookings/user/${currentUser.id}`,
+        { headers: getAuthHeader() }
+      );
+      
+      // Ordenar las reservas por fecha de inicio (descendente)
+      const sortedReservations = response.data.sort((a, b) => 
+        new Date(b.startDate) - new Date(a.startDate)
+      );
+      
+      setReservations(sortedReservations);
+    } catch (error) {
+      console.error('Error al cargar las reservas:', error);
+      setError('No se pudieron cargar tus reservas. Por favor, intenta nuevamente más tarde.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Función para formatear fechas
   const formatDate = (dateString) => {
@@ -57,6 +57,40 @@ const ReservationsHistoryPage = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return new Date(endDate) < today;
+  };
+
+  // Función para determinar si una reserva se puede cancelar
+  const canCancelReservation = (reservation) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const startDate = new Date(reservation.startDate);
+    return !isReservationPast(reservation.endDate) && 
+           startDate > today && 
+           reservation.status !== 'CANCELLED' &&
+           reservation.status !== 'COMPLETED';
+  };
+
+  // Función para cancelar una reserva
+  const handleCancelReservation = async (reservationId) => {
+    if (!window.confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/bookings/${reservationId}/cancel`,
+        {},
+        { headers: getAuthHeader() }
+      );
+
+      if (response.status === 200) {
+        // Actualizar la lista de reservas
+        fetchReservations();
+      }
+    } catch (error) {
+      console.error('Error al cancelar la reserva:', error);
+      setError('No se pudo cancelar la reserva. Por favor, intenta nuevamente más tarde.');
+    }
   };
 
   // Función para formatear precio
@@ -113,6 +147,8 @@ const ReservationsHistoryPage = () => {
                   <div className="reservation-status">
                     {isReservationPast(reservation.endDate) ? (
                       <span className="status-badge completed">Completada</span>
+                    ) : reservation.status === 'CANCELLED' ? (
+                      <span className="status-badge cancelled">Cancelada</span>
                     ) : (
                       <span className="status-badge upcoming">Próxima</span>
                     )}
@@ -124,29 +160,19 @@ const ReservationsHistoryPage = () => {
                 
                 <div className="reservation-content">
                   <div className="product-info">
-                    {reservation.product.images && reservation.product.images.length > 0 ? (
-                      <img 
-                        src={reservation.product.images[0]} 
-                        alt={reservation.product.name} 
-                        className="product-image"
-                      />
-                    ) : (
-                      <div className="no-image">
-                        <span>Sin imagen</span>
-                      </div>
-                    )}
-                    
-                    <div className="product-details">
-                      <Link 
-                        to={`/productos/${reservation.product.id}`}
-                        className="product-link"
-                      >
-                        <h3 className="product-name">{reservation.product.name}</h3>
-                      </Link>
-                      
-                      {reservation.product.category && (
-                        <span className="product-category">{reservation.product.category.name}</span>
+                    <div className="product-image">
+                      {reservation.product.images && reservation.product.images.length > 0 ? (
+                        <img 
+                          src={reservation.product.images[0]} 
+                          alt={reservation.product.name}
+                        />
+                      ) : (
+                        <div className="no-image">Sin imagen</div>
                       )}
+                    </div>
+                    <div className="product-details">
+                      <h3 className="product-name">{reservation.product.name}</h3>
+                      <p className="product-category">{reservation.product.category.name}</p>
                     </div>
                   </div>
                   
@@ -176,6 +202,15 @@ const ReservationsHistoryPage = () => {
                   >
                     Ver detalles del producto
                   </Link>
+                  
+                  {canCancelReservation(reservation) && (
+                    <button
+                      className="cancel-button"
+                      onClick={() => handleCancelReservation(reservation.id)}
+                    >
+                      Cancelar reserva
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

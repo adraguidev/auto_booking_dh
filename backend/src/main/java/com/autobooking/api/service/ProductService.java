@@ -2,6 +2,7 @@ package com.autobooking.api.service;
 
 import com.autobooking.api.model.Feature;
 import com.autobooking.api.model.Product;
+import com.autobooking.api.model.Booking;
 import com.autobooking.api.repository.FeatureRepository;
 import com.autobooking.api.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,27 +10,36 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final FeatureRepository featureRepository;
+    private final BookingService bookingService;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, FeatureRepository featureRepository) {
+    public ProductService(ProductRepository productRepository, FeatureRepository featureRepository, BookingService bookingService) {
         this.productRepository = productRepository;
         this.featureRepository = featureRepository;
+        this.bookingService = bookingService;
     }
 
     public Product addProduct(Product product) {
         if (product.getName() == null || product.getName().trim().isEmpty() ||
             product.getDescription() == null || product.getDescription().trim().isEmpty()) {
             throw new IllegalArgumentException("Nombre y descripción son obligatorios");
+        }
+        
+        if (product.getPrice() == null) {
+            throw new IllegalArgumentException("El precio es obligatorio");
         }
         
         return productRepository.save(product);
@@ -165,12 +175,32 @@ public class ProductService {
             products = productRepository.findAll();
         }
         
-        // TODO: Filtrar productos por disponibilidad de fechas cuando se implemente el sistema de reservas
-        // Por ahora, devolvemos todos los productos según la categoría
-        // En el futuro, se filtrarán según:
-        // - Un producto está disponible si no tiene reservas que se solapen con el rango solicitado
-        // - Condición de solapamiento: reservation.startDate <= endDate && reservation.endDate >= startDate
+        // Si no se proporcionaron fechas, devolver todos los productos
+        if (startDate == null || endDate == null) {
+            return products;
+        }
         
-        return products;
+        // Filtrar productos por disponibilidad
+        List<Product> availableProducts = new ArrayList<>();
+        
+        for (Product product : products) {
+            // Verificar si el producto está disponible para el rango de fechas
+            boolean isAvailable = bookingService.isProductAvailable(product.getId(), startDate, endDate);
+            
+            if (isAvailable) {
+                availableProducts.add(product);
+            }
+        }
+        
+        return availableProducts;
+    }
+
+    public Product updateProductPrice(Long id, BigDecimal newPrice) {
+        Product product = findById(id);
+        if (product == null) {
+            throw new NoSuchElementException("Producto no encontrado con ID: " + id);
+        }
+        product.setPrice(newPrice);
+        return productRepository.save(product);
     }
 } 

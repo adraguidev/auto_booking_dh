@@ -11,6 +11,7 @@
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/model/User.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/controller/AuthController.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/repository/ProductRepository.java
+/Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/util/PasswordHashGenerator.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/config/CorsConfig.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/service/UserService.java
 /Users/adragui/Developer/auto_booking_dh/backend/src/main/java/com/autobooking/api/service/CategoryService.java

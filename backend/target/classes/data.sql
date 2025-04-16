@@ -1,5 +1,6 @@
 -- Limpiar datos existentes manteniendo la estructura
 DELETE FROM product_images;
+DELETE FROM product_features;
 DELETE FROM products;
 DELETE FROM categories;
 DELETE FROM users;
@@ -15,27 +16,27 @@ INSERT INTO categories (name) VALUES
 
 -- Insertar usuarios (contraseña: "password123" codificada con BCrypt)
 INSERT INTO users (first_name, last_name, email, password, is_admin) VALUES 
-('Admin', 'Usuario', 'admin@example.com', '$2a$10$LYGfuI/GKM5u8kgF5Q4t2eZi1GYM0zJAopxfUZFPBVvUQJJ/KmVKW', true),
-('Cliente', 'Regular', 'cliente@example.com', '$2a$10$LYGfuI/GKM5u8kgF5Q4t2eZi1GYM0zJAopxfUZFPBVvUQJJ/KmVKW', false);
+('Admin', 'Usuario', 'admin@example.com', '$2a$10$AbssHoRQ/hzhA8AMQhBNmOJrIv0IjCN37yfgwswElC.C7xpPE1eCu', true),
+('Cliente', 'Regular', 'cliente@example.com', '$2a$10$AbssHoRQ/hzhA8AMQhBNmOJrIv0IjCN37yfgwswElC.C7xpPE1eCu', false);
 
--- Insertar productos con sus categorías (usamos los IDs recién generados)
-INSERT INTO products (name, description, category_id) 
-SELECT 'Toyota Corolla', 'Sedán confortable para toda la familia. Equipado con transmisión automática, aire acondicionado y sistema de entretenimiento con pantalla táctil.', id FROM categories WHERE name = 'Sedán';
+-- Insertar productos con sus categorías y precios (usamos los IDs recién generados)
+INSERT INTO products (name, description, category_id, price) 
+SELECT 'Toyota Corolla', 'Sedán confortable para toda la familia. Equipado con transmisión automática, aire acondicionado y sistema de entretenimiento con pantalla táctil.', id, 50.00 FROM categories WHERE name = 'Sedán';
 
-INSERT INTO products (name, description, category_id) 
-SELECT 'Honda CR-V', 'SUV espacioso y económico. Ideal para viajes familiares y aventuras urbanas. Equipado con sistema de navegación, cámara de retroceso y sensores de proximidad.', id FROM categories WHERE name = 'SUV';
+INSERT INTO products (name, description, category_id, price) 
+SELECT 'Honda CR-V', 'SUV espacioso y económico. Ideal para viajes familiares y aventuras urbanas. Equipado con sistema de navegación, cámara de retroceso y sensores de proximidad.', id, 70.00 FROM categories WHERE name = 'SUV';
 
-INSERT INTO products (name, description, category_id) 
-SELECT 'Ford Ranger', 'Camioneta 4x4 resistente para todo tipo de terreno. Potente, espaciosa y con capacidad para cargas pesadas.', id FROM categories WHERE name = 'Camioneta';
+INSERT INTO products (name, description, category_id, price) 
+SELECT 'Ford Ranger', 'Camioneta 4x4 resistente para todo tipo de terreno. Potente, espaciosa y con capacidad para cargas pesadas.', id, 90.00 FROM categories WHERE name = 'Camioneta';
 
-INSERT INTO products (name, description, category_id) 
-SELECT 'Volkswagen Golf', 'Compacto ágil y económico, perfecto para la ciudad. Ofrece un manejo excepcional y bajo consumo de combustible.', id FROM categories WHERE name = 'Compacto';
+INSERT INTO products (name, description, category_id, price) 
+SELECT 'Volkswagen Golf', 'Compacto ágil y económico, perfecto para la ciudad. Ofrece un manejo excepcional y bajo consumo de combustible.', id, 45.00 FROM categories WHERE name = 'Compacto';
 
-INSERT INTO products (name, description, category_id) 
-SELECT 'Ford Mustang', 'Deportivo con gran potencia y diseño icónico. Motor V8 de alto rendimiento y sistema de sonido premium.', id FROM categories WHERE name = 'Deportivo';
+INSERT INTO products (name, description, category_id, price) 
+SELECT 'Ford Mustang', 'Deportivo con gran potencia y diseño icónico. Motor V8 de alto rendimiento y sistema de sonido premium.', id, 120.00 FROM categories WHERE name = 'Deportivo';
 
-INSERT INTO products (name, description, category_id) 
-SELECT 'BMW Serie 3', 'Lujo y rendimiento en un solo auto. Interior de alta calidad, tecnología de punta y prestaciones deportivas.', id FROM categories WHERE name = 'Lujo';
+INSERT INTO products (name, description, category_id, price) 
+SELECT 'BMW Serie 3', 'Lujo y rendimiento en un solo auto. Interior de alta calidad, tecnología de punta y prestaciones deportivas.', id, 150.00 FROM categories WHERE name = 'Lujo';
 
 -- Insertar imágenes para los productos (después de insertarlos)
 INSERT INTO product_images (product_id, image)

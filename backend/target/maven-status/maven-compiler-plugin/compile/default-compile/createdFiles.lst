@@ -18,6 +18,7 @@ com/autobooking/api/config/CorsConfig.class
 com/autobooking/api/model/User.class
 com/autobooking/api/model/Feature.class
 com/autobooking/api/service/BookingService.class
+com/autobooking/api/controller/BookingController.class
 com/autobooking/api/config/DataInitializer.class
 com/autobooking/api/AutoBookingApplication.class
 com/autobooking/api/model/Category.class

@@ -3,30 +3,63 @@ import { createContext, useState, useEffect, useContext } from 'react';
 const AuthContext = createContext();
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe ser usado dentro de un AuthProvider');
+  }
+  return context;
 }
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   // Cargar usuario desde localStorage al iniciar
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const loadUserData = () => {
       try {
-        setCurrentUser(JSON.parse(storedUser));
+        const storedUser = localStorage.getItem('user');
+        const storedToken = localStorage.getItem('authToken');
+        
+        console.log('Cargando datos de usuario:', { storedUser, storedToken });
+        
+        if (storedUser && storedToken) {
+          const parsedUser = JSON.parse(storedUser);
+          console.log('Usuario parseado:', parsedUser);
+          if (parsedUser && parsedUser.id) {
+            setCurrentUser(parsedUser);
+            setIsAuthenticated(true);
+          } else {
+            console.error('Datos de usuario inválidos:', parsedUser);
+            localStorage.removeItem('user');
+            localStorage.removeItem('authToken');
+            setCurrentUser(null);
+            setIsAuthenticated(false);
+          }
+        } else {
+          console.log('No se encontraron datos de usuario en localStorage');
+          setCurrentUser(null);
+          setIsAuthenticated(false);
+        }
       } catch (error) {
         console.error('Error al cargar los datos del usuario:', error);
         localStorage.removeItem('user');
+        localStorage.removeItem('authToken');
+        setCurrentUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+
+    loadUserData();
   }, []);
 
   // Función para iniciar sesión
   const login = async (email, password) => {
     try {
+      console.log('Iniciando sesión con:', { email });
       const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
         headers: {
@@ -41,6 +74,11 @@ export function AuthProvider({ children }) {
       }
       
       const data = await response.json();
+      console.log('Datos de login recibidos:', data);
+      
+      if (!data.user || !data.token || !data.user.id) {
+        throw new Error('Datos de usuario o token no recibidos del servidor o son inválidos');
+      }
       
       // Guardar token en localStorage
       localStorage.setItem('authToken', data.token);
@@ -48,19 +86,29 @@ export function AuthProvider({ children }) {
       // Guardar datos del usuario en localStorage y en estado
       localStorage.setItem('user', JSON.stringify(data.user));
       setCurrentUser(data.user);
+      setIsAuthenticated(true);
+      
+      console.log('Sesión iniciada correctamente:', { user: data.user, isAuthenticated: true });
       
       return data;
     } catch (error) {
       console.error('Error al iniciar sesión:', error.message);
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      setCurrentUser(null);
+      setIsAuthenticated(false);
       throw error;
     }
   };
 
   // Función para cerrar sesión
   const logout = () => {
+    console.log('Cerrando sesión...');
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     setCurrentUser(null);
+    setIsAuthenticated(false);
+    console.log('Sesión cerrada');
   };
 
   // Verificar si el usuario es administrador
@@ -98,8 +146,15 @@ export function AuthProvider({ children }) {
     getUserInitials,
     getFullName,
     getAuthHeader,
-    loading
+    loading,
+    isAuthenticated
   };
+
+  console.log('Estado actual de AuthContext:', {
+    currentUser,
+    isAuthenticated,
+    loading
+  });
 
   return (
     <AuthContext.Provider value={value}>

@@ -68,6 +68,11 @@ public class BookingService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NoSuchElementException("Producto no encontrado"));
 
+        // Validar que el producto tiene un precio válido
+        if (product.getPrice() == null) {
+            throw new IllegalStateException("El producto no tiene un precio definido. Producto ID: " + productId);
+        }
+
         // Verificar si hay solapamiento con otras reservas
         if (bookingRepository.existsOverlappingBooking(
                 productId, startDate, endDate, Booking.BookingStatus.CANCELLED)) {

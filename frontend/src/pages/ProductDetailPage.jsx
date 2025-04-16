@@ -18,6 +18,8 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [availabilityError, setAvailabilityError] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   
   // Función para manejar el clic en el botón de reserva
   const handleReserveClick = () => {
@@ -72,113 +74,135 @@ const ProductDetailPage = () => {
     fetchProductDetails();
   }, [id]);
   
-  // Cargar fechas no disponibles
-  useEffect(() => {
-    const fetchUnavailableDates = async () => {
-      try {
-        setAvailabilityError(null);
-        const response = await fetch(`http://localhost:8080/api/products/${id}/unavailable-dates`);
-        
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Convertir las fechas a objetos Date para el calendario
-        const unavailableDateObjects = [];
-        
-        if (data && data.unavailableDates && Array.isArray(data.unavailableDates)) {
-          data.unavailableDates.forEach(item => {
-            if (item && item.date) {
-              // Es una fecha individual
-              unavailableDateObjects.push(new Date(item.date));
-            } else if (item && item.startDate && item.endDate) {
-              // Es un rango de fechas
-              const start = new Date(item.startDate);
-              const end = new Date(item.endDate);
-              
-              // Añadir todas las fechas dentro del rango
-              const currentDate = new Date(start);
-              while (currentDate <= end) {
-                unavailableDateObjects.push(new Date(currentDate));
-                currentDate.setDate(currentDate.getDate() + 1);
-              }
-            }
-          });
-        }
-        
-        setUnavailableDates(unavailableDateObjects);
-      } catch (error) {
-        console.error('Error al cargar fechas no disponibles:', error);
-        setAvailabilityError('No se pudo cargar la disponibilidad. Intenta refrescar la página.');
-        // Si hay un error, asegurarse de que unavailableDates siga siendo un arreglo vacío
-        setUnavailableDates([]);
+  // Función para cargar fechas no disponibles
+  const fetchUnavailableDates = async () => {
+    try {
+      console.log('[DEBUG] Iniciando fetchUnavailableDates para producto:', id);
+      const response = await fetch(`http://localhost:8080/api/products/${id}/unavailable-dates`);
+      if (!response.ok) {
+        throw new Error('Error al cargar las fechas no disponibles');
       }
-    };
-    
+      const data = await response.json();
+      console.log('[DEBUG] Respuesta completa del backend:', JSON.stringify(data, null, 2));
+      
+      if (!data.unavailableDates || !Array.isArray(data.unavailableDates)) {
+        console.error('[DEBUG] Formato de respuesta inesperado:', data);
+        setUnavailableDates([]);
+        return;
+      }
+      
+      // Convertir las reservas a fechas individuales
+      const allDates = data.unavailableDates.flatMap(item => {
+        console.log('[DEBUG] Procesando item de fecha:', JSON.stringify(item, null, 2));
+        try {
+          if (item.type === 'single' && item.date) {
+            // Para fechas individuales
+            const date = new Date(item.date);
+            console.log('[DEBUG] Procesando fecha individual:', date.toISOString().split('T')[0]);
+            
+            if (isNaN(date.getTime())) {
+              console.error('[DEBUG] Fecha individual inválida:', item);
+              return [];
+            }
+            
+            return [date];
+          } else if (item.type === 'range' && item.startDate && item.endDate) {
+            // Para rangos de fechas
+            const start = new Date(item.startDate);
+            const end = new Date(item.endDate);
+            
+            console.log('[DEBUG] Procesando rango de fechas (original):', {
+              startOriginal: item.startDate,
+              endOriginal: item.endDate
+            });
+            
+            // Ajustar el desfase de zona horaria (el backend usa LocalDate que no tiene tiempo)
+            // El desfase ocurre debido a la zona horaria. Necesitamos restar un día 
+            // para compensar cómo Java LocalDate y JavaScript Date manejan las fechas
+            const correctedStart = new Date(start);
+            correctedStart.setDate(correctedStart.getDate() - 1);
+            
+            const correctedEnd = new Date(end);
+            correctedEnd.setDate(correctedEnd.getDate() - 1);
+            
+            console.log('[DEBUG] Procesando rango de fechas (corregido con ajuste):', {
+              startCorregido: correctedStart.toISOString().split('T')[0],
+              endCorregido: correctedEnd.toISOString().split('T')[0]
+            });
+            
+            if (isNaN(correctedStart.getTime()) || isNaN(correctedEnd.getTime())) {
+              console.error('[DEBUG] Rango de fechas inválido:', item);
+              return [];
+            }
+            
+            // Generar todas las fechas en el rango
+            const dates = [];
+            const current = new Date(correctedStart);
+            while (current <= correctedEnd) {
+              dates.push(new Date(current));
+              current.setDate(current.getDate() + 1);
+            }
+            console.log('[DEBUG] Fechas generadas para el rango:', 
+              dates.map(d => d.toISOString().split('T')[0]));
+            return dates;
+          } else {
+            console.error('[DEBUG] Formato de fecha no reconocido:', item);
+            return [];
+          }
+        } catch (error) {
+          console.error('[DEBUG] Error al procesar fecha:', item, error);
+          return [];
+        }
+      });
+      
+      console.log('[DEBUG] Total de fechas procesadas:', allDates.length);
+      console.log('[DEBUG] Fechas a marcar como no disponibles:', 
+        allDates.map(d => d.toISOString().split('T')[0]));
+      setUnavailableDates(allDates);
+    } catch (error) {
+      console.error('[DEBUG] Error al cargar fechas no disponibles:', error);
+      setAvailabilityError('No se pudo cargar la disponibilidad. Intenta refrescar la página.');
+    }
+  };
+  
+  // Cargar fechas no disponibles cuando cambia el productId
+  useEffect(() => {
     if (id) {
       fetchUnavailableDates();
     }
   }, [id]);
   
-  // Función para reintentar cargar las fechas no disponibles
-  const handleRetryLoading = () => {
-    if (id) {
-      const fetchUnavailableDates = async () => {
-        try {
-          setAvailabilityError(null);
-          const response = await fetch(`http://localhost:8080/api/products/${id}/unavailable-dates`);
-          
-          if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-          }
-          
-          const data = await response.json();
-          
-          // Convertir las fechas a objetos Date para el calendario
-          const unavailableDateObjects = [];
-          
-          if (data && data.unavailableDates && Array.isArray(data.unavailableDates)) {
-            data.unavailableDates.forEach(item => {
-              if (item && item.date) {
-                // Es una fecha individual
-                unavailableDateObjects.push(new Date(item.date));
-              } else if (item && item.startDate && item.endDate) {
-                // Es un rango de fechas
-                const start = new Date(item.startDate);
-                const end = new Date(item.endDate);
-                
-                // Añadir todas las fechas dentro del rango
-                const currentDate = new Date(start);
-                while (currentDate <= end) {
-                  unavailableDateObjects.push(new Date(currentDate));
-                  currentDate.setDate(currentDate.getDate() + 1);
-                }
-              }
-            });
-          }
-          
-          setUnavailableDates(unavailableDateObjects);
-        } catch (error) {
-          console.error('Error al cargar fechas no disponibles:', error);
-          setAvailabilityError('No se pudo cargar la disponibilidad. Intenta refrescar la página.');
-          // Si hay un error, asegurarse de que unavailableDates siga siendo un arreglo vacío
-          setUnavailableDates([]);
-        }
-      };
+  // Función para deshabilitar fechas no disponibles en el calendario
+  const isDateBlocked = (date) => {
+    if (!date) return false;
+    
+    const dateStr = date.toISOString().split('T')[0];
+    
+    // Comprobamos si alguna de las fechas no disponibles coincide con la fecha actual
+    const isBlocked = unavailableDates.some(unavailableDate => {
+      const unavailableDateStr = unavailableDate.toISOString().split('T')[0];
+      const matches = unavailableDateStr === dateStr;
       
-      fetchUnavailableDates();
+      if (matches) {
+        console.log('[DEBUG] Fecha coincide y está bloqueada:', dateStr);
+      }
+      
+      return matches;
+    });
+    
+    if (isBlocked) {
+      console.log('[DEBUG] Fecha bloqueada final:', dateStr);
     }
+    
+    return isBlocked;
   };
   
-  // Función para deshabilitar fechas no disponibles en el calendario
-  const disableDates = (date) => {
-    return unavailableDates.some(unavailableDate => 
-      date.getDate() === unavailableDate.getDate() &&
-      date.getMonth() === unavailableDate.getMonth() &&
-      date.getFullYear() === unavailableDate.getFullYear()
-    );
+  // Función para manejar el cambio en la fecha seleccionada
+  const handleDateChange = (ranges) => {
+    if (ranges.length > 0) {
+      setStartDate(ranges[0].startDate);
+      setEndDate(ranges[0].endDate);
+    }
   };
   
   // Si está cargando, mostrar indicador
@@ -327,7 +351,7 @@ const ProductDetailPage = () => {
                   <p>{availabilityError}</p>
                   <button 
                     className="retry-button" 
-                    onClick={handleRetryLoading}
+                    onClick={fetchUnavailableDates}
                   >
                     Reintentar
                   </button>
@@ -339,6 +363,16 @@ const ProductDetailPage = () => {
                     minDate={new Date()}
                     color="#0077b6"
                     locale={es}
+                    onChange={handleDateChange}
+                    disabledDay={isDateBlocked}
+                    ranges={[
+                      {
+                        startDate: startDate,
+                        endDate: endDate,
+                        key: 'selection',
+                        color: '#0077b6'
+                      }
+                    ]}
                   />
                   
                   <div className="calendar-legend">

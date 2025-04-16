@@ -3,9 +3,11 @@ package com.autobooking.api.controller;
 import com.autobooking.api.model.Category;
 import com.autobooking.api.model.Feature;
 import com.autobooking.api.model.Product;
+import com.autobooking.api.model.Booking;
 import com.autobooking.api.service.CategoryService;
 import com.autobooking.api.service.FeatureService;
 import com.autobooking.api.service.ProductService;
+import com.autobooking.api.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/products")
@@ -29,12 +33,14 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final FeatureService featureService;
+    private final BookingService bookingService;
 
     @Autowired
-    public ProductController(ProductService productService, CategoryService categoryService, FeatureService featureService) {
+    public ProductController(ProductService productService, CategoryService categoryService, FeatureService featureService, BookingService bookingService) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.featureService = featureService;
+        this.bookingService = bookingService;
     }
 
     @PostMapping
@@ -43,6 +49,12 @@ public class ProductController {
             Product product = new Product();
             product.setName((String) productRequest.get("name"));
             product.setDescription((String) productRequest.get("description"));
+            
+            // Obtener precio del request
+            if (productRequest.containsKey("price")) {
+                BigDecimal price = new BigDecimal(productRequest.get("price").toString());
+                product.setPrice(price);
+            }
             
             // Obtener imágenes del request
             @SuppressWarnings("unchecked")
@@ -201,39 +213,46 @@ public class ProductController {
         try {
             // Verifica si el producto existe
             Product product = productService.findById(id);
+            System.out.println("DEBUG - Buscando fechas no disponibles para producto: " + id);
             
-            // Simulación de fechas no disponibles
-            // Esto será reemplazado por lógica real que consulte las reservas
-            List<Map<String, Object>> unavailableDates = new ArrayList<>();
+            // Obtener las reservas activas para el producto
+            List<Booking> activeBookings = bookingService.getActiveBookingsForProduct(id);
+            System.out.println("DEBUG - Reservas activas encontradas: " + activeBookings.size());
             
-            // Simular días individuales no disponibles (los próximos 3 días pares)
-            LocalDate today = LocalDate.now();
-            for (int i = 2; i <= 6; i += 2) {
-                LocalDate unavailableDay = today.plusDays(i);
-                Map<String, Object> singleDate = new HashMap<>();
-                singleDate.put("date", unavailableDay.format(DateTimeFormatter.ISO_DATE));
-                singleDate.put("type", "single");
-                unavailableDates.add(singleDate);
+            // Imprimir detalles de cada reserva
+            for (Booking booking : activeBookings) {
+                System.out.println("DEBUG - Reserva: " + booking.getId() + 
+                    " - Desde: " + booking.getStartDate() + 
+                    " - Hasta: " + booking.getEndDate() + 
+                    " - Estado: " + booking.getStatus());
             }
             
-            // Simular un rango de fechas no disponibles (2 semanas después por 3 días)
-            Map<String, Object> dateRange = new HashMap<>();
-            dateRange.put("startDate", today.plusDays(14).format(DateTimeFormatter.ISO_DATE));
-            dateRange.put("endDate", today.plusDays(16).format(DateTimeFormatter.ISO_DATE));
-            dateRange.put("type", "range");
-            unavailableDates.add(dateRange);
+            // Convertir las reservas a fechas no disponibles
+            List<Map<String, Object>> unavailableDates = new ArrayList<>();
+            
+            for (Booking booking : activeBookings) {
+                Map<String, Object> dateRange = new HashMap<>();
+                dateRange.put("type", "range");
+                String startDate = booking.getStartDate().toString();
+                String endDate = booking.getEndDate().toString();
+                dateRange.put("startDate", startDate);
+                dateRange.put("endDate", endDate);
+                unavailableDates.add(dateRange);
+                System.out.println("DEBUG - Agregada fechas no disponibles desde: " + 
+                    startDate + " hasta: " + endDate);
+            }
             
             Map<String, Object> response = new HashMap<>();
             response.put("productId", id);
             response.put("unavailableDates", unavailableDates);
+            System.out.println("DEBUG - Respuesta final: " + response);
             
-            return ResponseEntity.ok(response);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode())
-                    .body(Collections.singletonMap("error", e.getReason()));
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("error", "Error al obtener fechas no disponibles"));
+            e.printStackTrace();
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Error al obtener fechas no disponibles: " + e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -253,6 +272,42 @@ public class ProductController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al obtener el producto: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}/debug")
+    public ResponseEntity<?> getProductDebugInfo(@PathVariable Long id) {
+        try {
+            Product product = productService.findById(id);
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Producto no encontrado con ID: " + id));
+            }
+            
+            Map<String, Object> debugInfo = new HashMap<>();
+            debugInfo.put("id", product.getId());
+            debugInfo.put("name", product.getName());
+            debugInfo.put("price", product.getPrice());
+            debugInfo.put("category", product.getCategory() != null ? product.getCategory().getName() : null);
+            
+            return new ResponseEntity<>(debugInfo, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{id}/price")
+    public ResponseEntity<?> updateProductPrice(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        try {
+            BigDecimal newPrice = new BigDecimal(request.get("price").toString());
+            Product updatedProduct = productService.updateProductPrice(id, newPrice);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "Producto no encontrado con ID: " + id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error al actualizar el precio: " + e.getMessage()));
         }
     }
 } 

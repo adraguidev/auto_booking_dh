@@ -13,6 +13,7 @@ const ProductFormAdmin = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [price, setPrice] = useState('');
   
   const navigate = useNavigate();
 
@@ -119,7 +120,8 @@ const ProductFormAdmin = () => {
         name,
         description,
         images,
-        categoryId: categoryId || null // Incluir categoryId si está seleccionado
+        categoryId: categoryId || null, // Incluir categoryId si está seleccionado
+        price: parseFloat(price)
       };
       
       const response = await fetch('http://localhost:8080/api/products', {
@@ -151,6 +153,7 @@ const ProductFormAdmin = () => {
         setImages([]);
         setImagePreviews([]);
         setErrors({});
+        setPrice('');
         
         // Redireccionar después de un breve momento
         setTimeout(() => {
@@ -210,6 +213,19 @@ const ProductFormAdmin = () => {
             rows="5"
           />
           {errors.description && <div className="error-message">{errors.description}</div>}
+        </div>
+        
+        <div className="form-group">
+          <label htmlFor="price">Precio por día (€):</label>
+          <input
+            type="number"
+            id="price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            min="0"
+            step="0.01"
+            required
+          />
         </div>
         
         <div className="form-group">

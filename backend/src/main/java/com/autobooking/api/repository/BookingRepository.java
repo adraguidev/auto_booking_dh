@@ -39,7 +39,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("cancelledStatus") Booking.BookingStatus cancelledStatus);
             
     // Obtener todas las reservas activas (no canceladas) para un producto
-    @Query("SELECT b FROM Booking b WHERE b.product.id = :productId AND b.status != :cancelledStatus")
+    @Query("SELECT b FROM Booking b WHERE b.product.id = :productId " +
+           "AND b.status != :cancelledStatus " +
+           "AND b.endDate >= CURRENT_DATE " +
+           "AND (b.status = com.autobooking.api.model.Booking$BookingStatus.PENDING " +
+           "   OR b.status = com.autobooking.api.model.Booking$BookingStatus.CONFIRMED) " +
+           "ORDER BY b.startDate")
     List<Booking> findActiveBookingsByProductId(
             @Param("productId") Long productId,
             @Param("cancelledStatus") Booking.BookingStatus cancelledStatus);

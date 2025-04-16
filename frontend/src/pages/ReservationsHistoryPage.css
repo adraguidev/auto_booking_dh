@@ -214,6 +214,12 @@
   box-shadow: var(--shadow-sm);
 }
 
+.status-badge.cancelled {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
 .reservation-id {
   font-size: var(--font-size-sm);
   color: var(--text-tertiary);
@@ -371,46 +377,54 @@
 }
 
 .reservation-footer {
-  background: var(--bg-secondary);
-  padding: var(--space-4) var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: right;
+  margin-top: var(--space-4);
 }
 
 .view-details-button {
-  display: inline-block;
-  background-color: transparent;
-  color: var(--primary);
-  text-decoration: none;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
   padding: var(--space-2) var(--space-4);
-  border: 2px solid var(--primary);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
-  font-weight: 700;
+  font-weight: 600;
+  text-decoration: none;
   transition: all var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.view-details-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background: var(--primary-gradient);
-  transition: all var(--transition-normal);
-  z-index: -1;
 }
 
 .view-details-button:hover {
-  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  transform: translateY(-2px);
 }
 
-.view-details-button:hover::before {
-  width: 100%;
+.view-details-button:active {
+  transform: translateY(0);
+}
+
+.cancel-button {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  margin-left: var(--space-4);
+}
+
+.cancel-button:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  transform: translateY(-2px);
+}
+
+.cancel-button:active {
+  transform: translateY(0);
 }
 
 /* Animaciones */

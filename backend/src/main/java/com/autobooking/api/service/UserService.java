@@ -88,8 +88,15 @@ public class UserService {
         
         User user = userOptional.get();
         
+        System.out.println("Intentando autenticar usuario: " + email);
+        System.out.println("Contraseña proporcionada: " + password);
+        System.out.println("Hash almacenado: " + user.getPassword());
+        
         // Verificar la contraseña
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        boolean matches = passwordEncoder.matches(password, user.getPassword());
+        System.out.println("¿Las contraseñas coinciden? " + matches);
+        
+        if (!matches) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Contraseña incorrecta");
         }
         
