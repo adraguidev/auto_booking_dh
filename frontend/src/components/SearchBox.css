@@ -44,14 +44,13 @@
 
 .search-fields {
   display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
+  gap: 28px;
   justify-content: center;
 }
 
 .date-range-group {
   display: flex;
-  gap: 18px;
+  gap: 28px;
   flex: 2;
 }
 
@@ -64,28 +63,18 @@
 }
 
 .form-group label {
-  margin-bottom: 7px;
-  font-weight: 600;
-  color: var(--primary-color);
-  font-size: 1rem;
   display: flex;
   align-items: center;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 1.08rem;
+  list-style: none !important;
 }
 
-.form-group label[for='startDate']::before {
-  content: '\1F4C5'; /* icono calendario */
-  margin-right: 7px;
-  font-size: 1.1em;
-}
+.form-group label[for='category']::before,
+.form-group label[for='startDate']::before,
 .form-group label[for='endDate']::before {
-  content: '\1F4C6'; /* icono calendario diferente */
-  margin-right: 7px;
-  font-size: 1.1em;
-}
-.form-group label[for='category']::before {
-  content: '\1F3C1'; /* icono bandera para categoría */
-  margin-right: 7px;
-  font-size: 1.1em;
+  content: none !important;
 }
 
 .form-group input,
@@ -103,6 +92,28 @@
   appearance: none;
 }
 
+.form-group input[type="date"],
+.form-group select {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1.5px solid #e0e0e0;
+  background: #edf0f3;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  height: 48px;
+}
+
+.form-group select {
+  background: #fff;
+  height: 48px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%230077b6" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px 20px;
+}
+
 .form-group input:focus,
 .form-group select:focus {
   border-color: var(--primary-color);
@@ -113,13 +124,6 @@
 .form-group select.error {
   border-color: #dc3545;
   background: #fff0f3;
-}
-
-.form-group select {
-  background-image: url('data:image/svg+xml;utf8,<svg fill="%230077b6" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 20px 20px;
 }
 
 .search-button {
@@ -151,16 +155,10 @@
   text-align: center;
 }
 
-@media (max-width: 768px) {
-  .search-fields {
-    flex-direction: column;
-    gap: 12px;
-  }
+@media (max-width: 800px) {
+  .search-fields,
   .date-range-group {
     flex-direction: column;
-    gap: 12px;
-  }
-  .form-group {
-    min-width: 100px;
+    gap: 16px;
   }
 }

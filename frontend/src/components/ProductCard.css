@@ -1,4 +1,4 @@
-.product-card {
+.product-card, .improved-product-card {
   background: #fff;
   border-radius: 18px;
   overflow: hidden;
@@ -9,6 +9,7 @@
   height: 100%;
   position: relative;
   border: 1.5px solid #e0e0e0;
+  color: initial;
 }
 
 .product-card:hover {
@@ -43,40 +44,50 @@
   transform: scale(1.05);
 }
 
-.product-content {
+.product-content, .improved-product-content {
   padding: 28px 20px 18px 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-.product-title {
+.product-card .product-title,
+.product-card .improved-product-title {
   margin: 0 0 8px 0;
   font-size: 1.25rem;
-  color: #23272f;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.2px;
+  color: var(--primary-color) !important;
+  text-shadow: 0 2px 8px rgba(0, 119, 182, 0.10);
 }
 
-.product-description {
-  margin: 0 0 18px 0;
-  font-size: 1rem;
-  color: #6c757d;
+.product-card .product-description,
+.product-card .improved-product-description {
+  background: #fafdff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.97rem;
   flex-grow: 1;
-  line-height: 1.6;
+  line-height: 1.5;
+  color: #5c6b7a !important;
+  /* Mostrar descripción completa */
+  min-height: unset;
+  max-height: unset;
+  overflow: unset;
+  text-overflow: unset;
 }
 
-.product-category {
+.product-category, .improved-product-category {
   display: inline-block;
-  background: #e6f2f8;
   color: #0077b6;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-  font-weight: 600;
+  background: linear-gradient(90deg,#e6f2f8 60%,#cbe7fa 100%);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  box-shadow: 0 1px 4px 0 rgba(0,119,182,0.06);
 }
 
 .product-features {
@@ -138,7 +149,7 @@
 
 .product-title-link {
   text-decoration: none;
-  color: inherit;
+  color: unset;
 }
 
 .product-title-link:hover .product-title {
@@ -152,10 +163,11 @@
   margin: 10px 0;
 }
 
-.product-price {
-  font-weight: 700;
-  color: #0077b6;
+.product-card .product-price,
+.product-card .improved-product-price {
+  font-weight: 800;
   font-size: 1.15rem;
+  color: var(--primary-color) !important;
 }
 
 .favorite-icon {
@@ -218,6 +230,7 @@
   border: 1.5px solid #e0e0e0;
   min-width: 0;
   min-height: 420px;
+  color: initial;
 }
 
 .product-card.improved-product-card:hover {
@@ -271,55 +284,14 @@
   flex-grow: 1;
 }
 
-.improved-product-title {
-  margin: 0 0 7px 0;
-  font-size: 1.23rem;
-  color: #23272f;
-  font-weight: 800;
-  letter-spacing: 0.1px;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
 .improved-product-description {
-  margin: 0 0 15px 0;
+  background: #fafdff;
+  border-radius: 8px;
+  padding: 10px 14px;
   font-size: 0.97rem;
-  color: #6c757d;
   flex-grow: 1;
   line-height: 1.5;
-  min-height: 40px;
-  max-height: 48px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.improved-product-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 7px 0 14px 0;
-}
-
-.improved-product-category {
-  display: inline-block;
-  background: linear-gradient(90deg,#e6f2f8 60%,#cbe7fa 100%);
-  color: #0077b6;
-  padding: 5px 12px;
-  border-radius: 8px;
-  font-size: 0.92rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  box-shadow: 0 1px 4px 0 rgba(0,119,182,0.06);
-}
-
-.improved-product-price {
-  font-weight: 800;
-  color: #0077b6;
-  font-size: 1.13rem;
-  letter-spacing: 0.3px;
+  color: #5c6b7a;
 }
 
 .improved-product-features {
@@ -331,7 +303,7 @@
 .improved-product-link {
   display: inline-block;
   text-decoration: none;
-  color: #fff;
+  color: #fff !important;
   background: linear-gradient(90deg, #0077b6 0%, #48cae4 100%);
   padding: 12px 28px;
   border-radius: 10px;
@@ -349,8 +321,22 @@
 
 .improved-product-link:hover {
   background: linear-gradient(90deg, #48cae4 0%, #0077b6 100%);
+  color: #fff !important;
   transform: translateY(-2px) scale(1.03);
   box-shadow: 0 6px 16px 0 rgba(0, 119, 182, 0.13);
+}
+
+.product-category, .improved-product-category {
+  display: inline-block;
+  color: #0077b6;
+  background: linear-gradient(90deg,#e6f2f8 60%,#cbe7fa 100%);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  box-shadow: 0 1px 4px 0 rgba(0,119,182,0.06);
 }
 
 @media (max-width: 768px) {

@@ -54,7 +54,12 @@ const SearchBox = ({ onSearch, categories = [] }) => {
         <div className="search-fields">
           <div className="date-range-group">
             <div className="form-group">
-              <label htmlFor="startDate">Fecha de inicio</label>
+              <label htmlFor="startDate">
+                <span role="img" aria-label="Calendario" style={{ marginRight: '6px' }}>
+                  📅
+                </span>
+                Fecha de inicio
+              </label>
               <input
                 type="date"
                 id="startDate"
@@ -66,7 +71,12 @@ const SearchBox = ({ onSearch, categories = [] }) => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="endDate">Fecha de fin</label>
+              <label htmlFor="endDate">
+                <span role="img" aria-label="Calendario" style={{ marginRight: '6px' }}>
+                  📅
+                </span>
+                Fecha de fin
+              </label>
               <input
                 type="date"
                 id="endDate"
@@ -79,7 +89,12 @@ const SearchBox = ({ onSearch, categories = [] }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="category">Categoría</label>
+            <label htmlFor="category">
+              <span role="img" aria-label="Etiqueta" style={{ marginRight: '6px' }}>
+                🏷️
+              </span>
+              Categoría
+            </label>
             <select
               id="category"
               value={categoryId}
