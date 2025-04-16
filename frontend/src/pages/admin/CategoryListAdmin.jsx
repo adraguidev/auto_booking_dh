@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CategoryListAdmin.css';
 import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
 
 const API_URL = 'http://localhost:8080/api';
 
@@ -11,6 +12,7 @@ const CategoryListAdmin = () => {
   const [error, setError] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const { getAuthHeader, isAdmin } = useAuth();
 
   useEffect(() => {
     fetchCategories();
@@ -35,31 +37,23 @@ const CategoryListAdmin = () => {
     if (!newCategory.trim()) return;
 
     try {
-      // Obtener el token del localStorage
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('No autorizado. Por favor, inicie sesión.');
+      if (!isAdmin()) {
+        setError('No tienes permisos de administrador. Por favor, inicia sesión como administrador.');
         return;
       }
-
-      // Configurar los headers con el token de autenticación
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
 
       const response = await axios.post(
         `${API_URL}/categories`,
         { name: newCategory },
-        config
+        { headers: getAuthHeader() }
       );
 
       setCategories([...categories, response.data]);
       setNewCategory('');
+      setError(null);
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        setError('No autorizado. Por favor, inicie sesión.');
+      if (err.response && err.response.status === 403) {
+        setError('No tienes permisos de administrador para crear categorías.');
       } else {
         setError('Error al crear la categoría. Por favor, intente de nuevo.');
       }
@@ -81,24 +75,15 @@ const CategoryListAdmin = () => {
     if (!categoryToDelete) return;
 
     try {
-      // Obtener el token del localStorage
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('No autorizado. Por favor, inicie sesión.');
+      if (!isAdmin()) {
+        setError('No tienes permisos de administrador. Por favor, inicia sesión como administrador.');
         closeDeleteModal();
         return;
       }
 
-      // Configurar los headers con el token de autenticación
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
-
       await axios.delete(
         `${API_URL}/categories/${categoryToDelete.id}`,
-        config
+        { headers: getAuthHeader() }
       );
 
       // Actualizar la lista de categorías
@@ -106,8 +91,8 @@ const CategoryListAdmin = () => {
       setError(null);
       closeDeleteModal();
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        setError('No autorizado. Por favor, inicie sesión.');
+      if (err.response && err.response.status === 403) {
+        setError('No tienes permisos de administrador para eliminar categorías.');
       } else if (err.response && err.response.status === 409) {
         setError('No se puede eliminar la categoría porque está asociada a productos.');
       } else {

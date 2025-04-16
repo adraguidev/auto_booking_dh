@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './FeatureListAdmin.css';
 
 const API_URL = 'http://localhost:8080/api';
@@ -15,6 +16,7 @@ const FeatureListAdmin = () => {
   const [featureToDelete, setFeatureToDelete] = useState(null);
   
   const navigate = useNavigate();
+  const { getAuthHeader, isAdmin } = useAuth();
   
   // Fetch the list of features when component mounts
   useEffect(() => {
@@ -73,24 +75,24 @@ const FeatureListAdmin = () => {
     }
     
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No estás autorizado. Por favor, inicia sesión.');
+      if (!isAdmin()) {
+        setError('No tienes permisos de administrador para crear características');
+        return;
       }
       
       await axios.post(`${API_URL}/features`, newFeature, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          ...getAuthHeader(),
           'Content-Type': 'application/json'
         }
       });
       
       setNewFeature({ name: '', icon: '' });
       fetchFeatures();
+      setError(null);
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      if (err.response && err.response.status === 403) {
+        setError('No tienes permisos para crear características');
       } else if (err.response && err.response.status === 400) {
         setError(err.response.data.message || 'Datos de característica inválidos');
       } else {
@@ -117,24 +119,24 @@ const FeatureListAdmin = () => {
     }
     
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No estás autorizado. Por favor, inicia sesión.');
+      if (!isAdmin()) {
+        setError('No tienes permisos de administrador para editar características');
+        return;
       }
       
       await axios.put(`${API_URL}/features/${editingFeature.id}`, editingFeature, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          ...getAuthHeader(),
           'Content-Type': 'application/json'
         }
       });
       
       setEditingFeature(null);
       fetchFeatures();
+      setError(null);
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      if (err.response && err.response.status === 403) {
+        setError('No tienes permisos para editar características');
       } else if (err.response && err.response.status === 400) {
         setError(err.response.data.message || 'Datos de característica inválidos');
       } else {
@@ -159,23 +161,22 @@ const FeatureListAdmin = () => {
     if (!featureToDelete) return;
     
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No estás autorizado. Por favor, inicia sesión.');
+      if (!isAdmin()) {
+        setError('No tienes permisos de administrador para eliminar características');
+        closeDeleteModal();
+        return;
       }
       
       await axios.delete(`${API_URL}/features/${featureToDelete.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: getAuthHeader()
       });
       
       closeDeleteModal();
       fetchFeatures();
+      setError(null);
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        localStorage.removeItem('token');
-        navigate('/login');
+      if (err.response && err.response.status === 403) {
+        setError('No tienes permisos para eliminar características');
       } else if (err.response && err.response.status === 409) {
         setError('Esta característica está asociada a uno o más productos y no puede ser eliminada');
       } else {

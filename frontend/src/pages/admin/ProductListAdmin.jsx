@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './ProductListAdmin.css';
 import { FaBoxOpen, FaPlus, FaTrashAlt } from 'react-icons/fa';
 
@@ -8,6 +9,7 @@ const ProductListAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const { getAuthHeader } = useAuth();
 
   // Cargar productos al montar el componente
   useEffect(() => {
@@ -57,55 +59,42 @@ const ProductListAdmin = () => {
     }
   };
 
-  const handleDelete = async (productId, productName) => {
-    // Confirmar eliminación
+  const handleDelete = async (productId) => {
+    const product = products.find((p) => p.id === productId);
+    if (!product) return;
+
     const isConfirmed = window.confirm(
-      `¿Está seguro de eliminar el producto "${productName}"?`
+      `¿Está seguro de eliminar el producto "${product.name}"?`
     );
 
     if (!isConfirmed) return;
 
     try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('No estás autorizado. Por favor, inicia sesión.');
-      }
-
       const response = await fetch(
         `http://localhost:8080/api/products/${productId}`,
         {
           method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: getAuthHeader()
         }
       );
 
       if (!response.ok) {
-        let errorMsg = `Error: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          if (errorData && errorData.error) {
-            errorMsg = errorData.error;
-          }
-        } catch (e) {}
-        throw new Error(errorMsg);
+        if (response.status === 403) {
+          throw new Error('No tienes permisos para eliminar productos');
+        }
+        throw new Error(`Error: ${response.status}`);
       }
 
-      // Actualizar estado para reflejar la eliminación
-      setProducts(products.filter((product) => product.id !== productId));
+      // Eliminar el producto de la lista local
+      setProducts(products.filter((p) => p.id !== productId));
+      // Si el producto estaba seleccionado, quitarlo de la selección
       setSelectedProducts((prev) => prev.filter((id) => id !== productId));
-      alert('Producto eliminado correctamente');
     } catch (error) {
       console.error('Error al eliminar producto:', error);
-      alert(
-        'Error al eliminar el producto. Intente nuevamente.\n' +
-          (error.message || '')
-      );
+      alert('Error al eliminar producto: ' + error.message);
     }
   };
 
-  // Manejar eliminación múltiple
   const handleDeleteMultiple = async () => {
     if (selectedProducts.length === 0) {
       alert('Por favor, seleccione al menos un producto para eliminar.');
@@ -123,12 +112,6 @@ const ProductListAdmin = () => {
 
     if (!isConfirmed) return;
 
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      alert('No estás autorizado. Por favor, inicia sesión.');
-      return;
-    }
-
     let failed = [];
     let deleted = [];
 
@@ -138,9 +121,7 @@ const ProductListAdmin = () => {
           `http://localhost:8080/api/products/${productId}`,
           {
             method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: getAuthHeader()
           }
         );
         if (!response.ok) {
@@ -157,7 +138,7 @@ const ProductListAdmin = () => {
           deleted.push(productId);
         }
       } catch (error) {
-        failed.push(productId);
+        failed.push({ id: productId, error: error.message });
       }
     }
 
@@ -169,16 +150,11 @@ const ProductListAdmin = () => {
     if (failed.length === 0) {
       alert('Productos eliminados correctamente');
     } else {
-      const failedNames = products
-        .filter((p) => failed.map((f) => f.id).includes(p.id))
-        .map((p) => {
-          const failObj = failed.find((f) => f.id === p.id);
-          return `${p.name}${
-            failObj && failObj.error ? ' (' + failObj.error + ')' : ''
-          }`;
-        })
-        .join(', ');
-      alert(`No se pudieron eliminar los siguientes productos: ${failedNames}`);
+      alert(
+        `Se eliminaron ${deleted.length} productos, pero ${failed.length} no pudieron ser eliminados.\nDetalles: ${failed
+          .map((f) => `ID ${f.id}: ${f.error}`)
+          .join('\n')}`
+      );
     }
   };
 
@@ -245,7 +221,7 @@ const ProductListAdmin = () => {
                 <td>
                   <button
                     className="delete-button"
-                    onClick={() => handleDelete(product.id, product.name)}
+                    onClick={() => handleDelete(product.id)}
                   >
                     Eliminar
                   </button>

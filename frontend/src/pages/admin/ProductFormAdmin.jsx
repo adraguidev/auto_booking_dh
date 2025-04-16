@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './ProductFormAdmin.css';
 
 const ProductFormAdmin = () => {
@@ -16,6 +17,7 @@ const ProductFormAdmin = () => {
   const [price, setPrice] = useState('');
   
   const navigate = useNavigate();
+  const { getAuthHeader } = useAuth();
 
   // Cargar categorías al montar el componente
   useEffect(() => {
@@ -127,10 +129,20 @@ const ProductFormAdmin = () => {
       const response = await fetch('http://localhost:8080/api/products', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...getAuthHeader()
         },
         body: JSON.stringify(productData)
       });
+      
+      if (!response.ok) {
+        if (response.status === 403) {
+          setErrors({ 
+            server: 'No tienes permisos para crear productos. Verifica que tu sesión es de administrador.'
+          });
+          return;
+        }
+      }
       
       const data = await response.json();
       
@@ -166,6 +178,7 @@ const ProductFormAdmin = () => {
         });
       }
     } catch (error) {
+      console.error('Error al crear producto:', error);
       setErrors({ 
         server: 'Error de conexión. Verifica tu conexión a internet e inténtalo nuevamente.'
       });
